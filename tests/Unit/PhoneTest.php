@@ -158,7 +158,12 @@ class PhoneTest extends TestCase
         $this->expectExceptionMessage('Incorrect verify token.');
         $user->verifyPhone('other_token', $now->copy()->subSeconds(15));
     }
-
+    
+    /**
+     * Method testVerifyExpiredToken
+     *
+     * @return void
+     */
     public function testVerifyExpiredToken()
     {
         $user = User::factory()->create([
