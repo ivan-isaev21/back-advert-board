@@ -26,9 +26,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password', 'status', 'role'
     ];
 
     /**
@@ -50,7 +48,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    
+
     /**
      * Method return rolesList
      *
@@ -64,7 +62,7 @@ class User extends Authenticatable
             self::ROLE_ADMIN => 'Admin',
         ];
     }
-    
+
     /**
      * Method register
      *
@@ -78,13 +76,13 @@ class User extends Authenticatable
         return static::create([
             'name' => $name,
             'email' => $email,
-            'password' => bcrypt($password),
+            'password' => $password,
             'verify_token' => Str::uuid(),
             'role' => self::ROLE_USER,
             'status' => self::STATUS_WAIT,
         ]);
     }
-    
+
     /**
      * Method return user isWait
      *
@@ -94,9 +92,9 @@ class User extends Authenticatable
     {
         return $this->status === self::STATUS_WAIT;
     }
-    
+
     /**
-     * Method return user isActive
+     * Method return user is Active
      *
      * @return bool
      */
@@ -104,7 +102,7 @@ class User extends Authenticatable
     {
         return $this->status === self::STATUS_ACTIVE;
     }
-    
+
     /**
      * Method verify user
      *
@@ -121,8 +119,7 @@ class User extends Authenticatable
             'verify_token' => null,
         ]);
     }
-    
-        
+
     /**
      * Method changeRole
      *
@@ -139,5 +136,25 @@ class User extends Authenticatable
             throw new \DomainException('Role is already assigned.');
         }
         $this->update(['role' => $role]);
+    }
+
+    /**
+     * Method return user is Moderator
+     *
+     * @return bool
+     */
+    public function isModerator(): bool
+    {
+        return $this->role === self::ROLE_MODERATOR;
+    }
+
+    /**
+     * Method return user is Admin
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
     }
 }
