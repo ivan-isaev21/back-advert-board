@@ -13,7 +13,7 @@ class RegisterTest extends TestCase
      *
      * @return void
      */
-    public function test_register(): void
+    public function testRegister(): void
     {
         $user = User::register(
             $name = 'name',
@@ -37,7 +37,7 @@ class RegisterTest extends TestCase
      *
      * @return void
      */
-    public function test_verify()
+    public function testVerify()
     {
         $user = User::register('name', 'email', 'password');
         $user->verify();
@@ -50,7 +50,7 @@ class RegisterTest extends TestCase
      *
      * @return void
      */
-    public function test_already_verified()
+    public function testAlreadyVerified()
     {
         $user = User::register('name', 'email', 'password');
         $user->verify();
