@@ -22,11 +22,11 @@ return new class extends Migration
             $table->string('status', 16);
             $table->string('verify_token')->nullable()->unique();
             $table->string('role', 16)->default(User::ROLE_USER);
-            $table->string('phone')->nullable()->after('email');
-            $table->boolean('phone_verified')->default(false)->after('phone');
-            $table->string('phone_verify_token')->nullable()->after('verify_token');
-            $table->timestamp('phone_verify_token_expire')->nullable()->after('phone_verify_token');
-            $table->boolean('phone_auth')->default(false)->after('phone');
+            $table->string('phone')->nullable();
+            $table->boolean('phone_verified')->default(false);
+            $table->string('phone_verify_token')->nullable();
+            $table->timestamp('phone_verify_token_expire')->nullable();
+            $table->boolean('phone_auth')->default(false);
             $table->timestamps();
         });
     }
