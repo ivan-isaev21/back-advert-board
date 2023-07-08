@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Entity\User;
 
 use App\Models\User;
 use Carbon\Carbon;
@@ -158,7 +158,7 @@ class PhoneTest extends TestCase
         $this->expectExceptionMessage('Incorrect verify token.');
         $user->verifyPhone('other_token', $now->copy()->subSeconds(15));
     }
-    
+
     /**
      * Method testVerifyExpiredToken
      *

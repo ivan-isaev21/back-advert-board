@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Entity\User;
 
 use App\Models\User;
 use Tests\TestCase;
 
 class RoleTest extends TestCase
-{    
+{
     /**
      * Method testChange
      *
@@ -24,7 +24,7 @@ class RoleTest extends TestCase
 
         self::assertTrue($user->isAdmin());
     }
-    
+
     /**
      * Method testAlready
      *
@@ -34,7 +34,7 @@ class RoleTest extends TestCase
     {
         $user = User::factory()->create([
             'role' => User::ROLE_ADMIN
-        ]);   
+        ]);
 
         $this->expectExceptionMessage('Role is already assigned.');
 

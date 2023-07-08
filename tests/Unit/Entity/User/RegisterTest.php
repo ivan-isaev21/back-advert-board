@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Entity\User;
 
 use App\Models\User;
 use Tests\TestCase;
@@ -44,7 +44,7 @@ class RegisterTest extends TestCase
         $this->assertFalse($user->isWait());
         $this->assertTrue($user->isActive());
     }
-    
+
     /**
      * Method test_already_verified
      *
