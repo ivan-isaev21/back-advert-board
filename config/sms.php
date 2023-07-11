@@ -1,8 +1,9 @@
 <?php
 
 return [
-    'driver' => env('SMS_DRIVER', 'array'),
+    'driver' => env('SMS_DRIVER', 'log'),
     'drivers' => [
-        'array' => []
+        'array' => [],
+        'log' => []
     ]
 ];

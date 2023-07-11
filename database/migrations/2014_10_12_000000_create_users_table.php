@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('phone_verify_token')->nullable();
             $table->timestamp('phone_verify_token_expire')->nullable();
             $table->boolean('phone_auth')->default(false);
+            $table->string('password_reset_token')->nullable();
+            $table->string('password_reset_token_expire')->nullable();
             $table->timestamps();
         });
     }

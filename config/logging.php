@@ -131,6 +131,11 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/mailer.log'),
         ],
+
+        'sms-sender' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/sms-sender.log'),
+        ],
     ],
 
 ];

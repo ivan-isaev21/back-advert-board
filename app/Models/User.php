@@ -53,6 +53,7 @@ class User extends Authenticatable
         'phone_verified' => 'boolean',
         'phone_verify_token_expire' => 'datetime',
         'phone_auth' => 'boolean',
+        'password_reset_token_expire' => 'datetime'
     ];
 
     /**
@@ -230,6 +231,7 @@ class User extends Authenticatable
         return $this->phone_verify_token;
     }
 
+
     /**
      * Method validatePhoneVerifyToken
      *
@@ -249,6 +251,48 @@ class User extends Authenticatable
 
         $this->phone_verify_token = null;
         $this->phone_verify_token_expire = null;
+        $this->saveOrFail();
+    }
+
+    /**
+     * Method requestPasswordResetToken
+     *
+     * @param Carbon $now 
+     *
+     * @return string
+     */
+    public function requestPasswordResetToken(Carbon $now): string
+    {
+        if (!empty($this->password_reset_token) && $this->password_reset_token_expire && $this->password_reset_token_expire->gt($now)) {
+            throw new \DomainException('Password reset token is already requested.');
+        }
+
+        $this->password_reset_token = (string)random_int(10000, 99999);
+        $this->password_reset_token_expire = $now->copy()->addHour();
+        $this->saveOrFail();
+
+        return $this->password_reset_token;
+    }
+
+    /**
+     * Method changePasswordByToken
+     *
+     * @param $token $token 
+     * @param $password $password 
+     * @return void
+     */
+    public function changePasswordByToken($token, $password, Carbon $now): void
+    {
+        if ($token !== $this->password_reset_token) {
+            throw new \DomainException('Incorrect password reset token.');
+        }
+        if ($this->password_reset_token_expire->lt($now)) {
+            throw new \DomainException('Password reset token is expired.');
+        }
+
+        $this->password = $password;
+        $this->password_reset_token = null;
+        $this->password_reset_token_expire = null;
         $this->saveOrFail();
     }
 
@@ -337,5 +381,5 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
-    }
+    }    
 }

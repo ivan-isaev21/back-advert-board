@@ -49,6 +49,8 @@ class RegisterController extends Controller
 
         $this->service->verify($user, $hash);
 
-        return response(['message' => 'Successfully verify email'], Response::HTTP_ACCEPTED);
+        return response([
+            'message' => 'Successfully verify email'
+        ], Response::HTTP_ACCEPTED);
     }
 }

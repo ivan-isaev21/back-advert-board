@@ -15,11 +15,11 @@ use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    private $smsSenderService;
+    private $smsSender;
 
-    public function __construct(SmsSender $smsSenderService)
+    public function __construct(SmsSender $smsSender)
     {
-        $this->smsSenderService = $smsSenderService;
+        $this->smsSender = $smsSender;
     }
 
     /**
@@ -38,20 +38,20 @@ class LoginController extends Controller
 
             if ($user->isWait()) {
                 Auth::logout();
-                throw ValidationException::withMessages([
-                    'error' => 'You need to confirm your account. Please check your email.',
-                ]);
+                return response([
+                    'error' => 'You need to confirm your account. Please check your email.'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             if ($user->isPhoneAuthEnabled()) {
                 Auth::logout();
                 $phoneVerifyToken = $user->requestPhoneVerifyToken(Carbon::now());
-                $this->smsSenderService->send($user->phone, 'Login code: ' . $phoneVerifyToken);
+                $this->smsSender->send($user->phone, 'Login code: ' . $phoneVerifyToken);
                 return response([
                     'message' => 'Please enter the login code sent to your phone.',
                     'token' => $phoneVerifyToken,
                     'id' => $user->id
-                ]);
+                ], Response::HTTP_ACCEPTED);
             }
 
             $token = $user->createToken('api-token')->plainTextToken;
@@ -60,12 +60,12 @@ class LoginController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => config('sanctum.expiration') * 60, // Optional: Specify token expiration time
-            ]);
+            ], Response::HTTP_ACCEPTED);
         }
 
-        throw ValidationException::withMessages([
-            'error' => 'Invalid login credentials.',
-        ]);
+        return response([
+            'error' => 'Invalid login credentials.'
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -87,11 +87,13 @@ class LoginController extends Controller
             return response([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'expires_in' => config('sanctum.expiration') * 60, // Optional: Specify token expiration time
-            ]);
+                'expires_in' => config('sanctum.expiration') * 60, 
+            ], Response::HTTP_ACCEPTED);
         }
 
-        return response(['error' => 'Invalid auth token.'], 422);
+        return response([
+            'error' => 'Invalid auth token.'
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -104,7 +106,9 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response(['message' => 'Successfully logged out']);
+        return response([
+            'message' => 'Successfully logged out.'
+        ], Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -118,6 +122,8 @@ class LoginController extends Controller
     {
         $request->user()->tokens()->where('id', '!=', $request->user()->currentAccessToken()->id)->delete();
 
-        return response(['message' => 'Other devices have been logged out.']);
+        return response([
+            'message' => 'Other devices have been logged out.'
+        ], Response::HTTP_ACCEPTED);
     }
 }

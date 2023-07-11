@@ -3,7 +3,7 @@
 namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Mail\CustomVerifyEmail;
+use App\Mail\CustomVerifyEmailMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -38,7 +38,7 @@ class RegisterService
                 $request->password
             );
 
-            $this->mailer->to($user->email)->send(new CustomVerifyEmail($user));
+            $this->mailer->to($user->email)->send(new CustomVerifyEmailMail($user));
 
             $this->dispatcher->dispatch(new Registered($user));
         });

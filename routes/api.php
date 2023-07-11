@@ -27,9 +27,15 @@ Route::group(['prefix' => 'v1'], function () {
     ], function () {
         Route::post('register', 'RegisterController@register')->middleware('guest');
         Route::post('login', 'LoginController@login')->middleware('guest');
+
         Route::post('logout', 'LoginController@logout')->middleware('auth:sanctum');
         Route::post('logout-other-devices', 'LoginController@logoutOtherDevices')->middleware('auth:sanctum');
+
         Route::post('verify-phone-token', 'LoginController@validatePhoneVerifyToken');
+
+        Route::post('request-password-reset-token', 'ResetPasswordController@requestPasswordResetToken');
+        Route::post('change-password', 'ResetPasswordController@changePassword');
+
         Route::get('email/verify/{id}/{hash}', 'RegisterController@verifyEmail')->name('verification.verify');
     });
 });
