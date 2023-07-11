@@ -17,3 +17,19 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::group(['prefix' => 'v1'], function () {
+
+    Route::group([
+        'prefix' => 'auth',
+        'namespace' => '\App\Http\Controllers\Api\v1\Auth'
+    ], function () {
+        Route::post('register', 'RegisterController@register')->middleware('guest');
+        Route::post('login', 'LoginController@login')->middleware('guest');
+        Route::post('logout', 'LoginController@logout')->middleware('auth:sanctum');
+        Route::post('logout-other-devices', 'LoginController@logoutOtherDevices')->middleware('auth:sanctum');
+        Route::post('verify-phone-token', 'LoginController@validatePhoneVerifyToken');
+        Route::get('email/verify/{id}/{hash}', 'RegisterController@verifyEmail')->name('verification.verify');
+    });
+});

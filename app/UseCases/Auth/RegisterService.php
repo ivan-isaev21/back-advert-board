@@ -3,11 +3,25 @@
 namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Mail\CustomVerifyEmail;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Mail\Mailer;
 
 class RegisterService
-{    
+{
+    private $mailer;
+    private $dispatcher;
+
+    public function __construct(Mailer $mailer, Dispatcher $dispatcher)
+    {
+        $this->mailer = $mailer;
+        $this->dispatcher = $dispatcher;
+    }
+
     /**
      * Method register
      *
@@ -23,9 +37,13 @@ class RegisterService
                 $request->email,
                 $request->password
             );
+
+            $this->mailer->to($user->email)->send(new CustomVerifyEmail($user));
+
+            $this->dispatcher->dispatch(new Registered($user));
         });
     }
-    
+
     /**
      * Method verify
      *
@@ -33,10 +51,11 @@ class RegisterService
      *
      * @return void
      */
-    public function verify(User $user): void
+    public function verify(User $user, string $hash): void
     {
-        DB::transaction(function () use ($user) {
-            $user->verify();
+        DB::transaction(function () use ($user, $hash) {
+            $user->verifyEmail($hash);
+            $this->dispatcher->dispatch(new Verified($user));
         });
     }
 }

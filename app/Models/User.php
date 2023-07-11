@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Carbon\Carbon;
+use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, MustVerifyEmail;
 
     public const STATUS_WAIT = 'wait';
     public const STATUS_ACTIVE = 'active';
@@ -109,6 +110,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Method verifyEmail
+     *
+     * @return void
+     */
+    public function verifyEmail(string $hash): void
+    {
+        if ($this->hasVerifiedEmail()) {
+            throw new \DomainException('User email is already verified.');
+        }
+
+        if ($this->verify_token !== $hash) {
+            throw new \DomainException('Invalid hash');
+        }
+
+        if ($this->markEmailAsVerified()) {
+            $this->verify();
+        }
+    }
+
+    /**
      * Method verify user
      *
      * @return void
@@ -143,7 +164,7 @@ class User extends Authenticatable
         $this->update(['role' => $role]);
     }
 
-        
+
     /**
      * Method unverifyPhone
      *
@@ -157,7 +178,7 @@ class User extends Authenticatable
         $this->phone_auth = false;
         $this->saveOrFail();
     }
-    
+
     /**
      * Method requestPhoneVerification
      *
@@ -180,7 +201,57 @@ class User extends Authenticatable
 
         return $this->phone_verify_token;
     }
-    
+
+
+    /**
+     * Method requestPhoneVerifyToken
+     *
+     * @param Carbon $now
+     *
+     * @return string
+     */
+    public function requestPhoneVerifyToken(Carbon $now): string
+    {
+        if (empty($this->phone)) {
+            throw new \DomainException('Phone number is empty.');
+        }
+        if (!empty($this->phone_verify_token) && $this->phone_verify_token_expire && $this->phone_verify_token_expire->gt($now)) {
+            throw new \DomainException('Token is already requested.');
+        }
+
+        if (!$this->isPhoneAuthEnabled()) {
+            throw new \DomainException('Phone auth is disabled.');
+        }
+
+        $this->phone_verify_token = (string)random_int(10000, 99999);
+        $this->phone_verify_token_expire = $now->copy()->addSeconds(300);
+        $this->saveOrFail();
+
+        return $this->phone_verify_token;
+    }
+
+    /**
+     * Method validatePhoneVerifyToken
+     *
+     * @param $token 
+     * @param Carbon $now 
+     *
+     * @return void
+     */
+    public function validatePhoneVerifyToken($token, Carbon $now): void
+    {
+        if ($token !== $this->phone_verify_token) {
+            throw new \DomainException('Incorrect verify token.');
+        }
+        if ($this->phone_verify_token_expire->lt($now)) {
+            throw new \DomainException('Token is expired.');
+        }
+
+        $this->phone_verify_token = null;
+        $this->phone_verify_token_expire = null;
+        $this->saveOrFail();
+    }
+
     /**
      * Method verifyPhone
      *
@@ -202,7 +273,7 @@ class User extends Authenticatable
         $this->phone_verify_token_expire = null;
         $this->saveOrFail();
     }
-    
+
     /**
      * Method enablePhoneAuth
      *
@@ -216,7 +287,7 @@ class User extends Authenticatable
         $this->phone_auth = true;
         $this->saveOrFail();
     }
-    
+
     /**
      * Method disablePhoneAuth
      *
@@ -227,7 +298,7 @@ class User extends Authenticatable
         $this->phone_auth = false;
         $this->saveOrFail();
     }
-    
+
     /**
      * Method isPhoneVerified
      *
@@ -237,7 +308,7 @@ class User extends Authenticatable
     {
         return $this->phone_verified;
     }
-    
+
     /**
      * Method isPhoneAuthEnabled
      *
