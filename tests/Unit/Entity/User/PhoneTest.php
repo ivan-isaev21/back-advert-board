@@ -176,4 +176,31 @@ class PhoneTest extends TestCase
         $this->expectExceptionMessage('Token is expired.');
         $user->verifyPhone($token, $now->copy()->addSeconds(500));
     }
+    
+    /**
+     * Method testRequestPhoneVerifyToken
+     *
+     * @return void
+     */
+    public function testRequestPhoneVerifyToken():void{
+
+        $user = User::factory()->create([
+            'phone' => null,
+            'phone_verified' => false,
+            'phone_verify_token' => null,
+            'phone_verify_token_expire' => null
+        ]);
+
+        $this->expectExceptionMessage('Phone number is empty.');
+        $user->requestPhoneVerifyToken($now = Carbon::now());        
+
+        $user->update(['phone' => '+380000000000','phone_auth' => true]);
+        $user->requestPhoneVerifyToken($now);
+        $this->expectExceptionMessage('Token is already requested.');
+        $user->requestPhoneVerifyToken($now->copy()->addSeconds(50));
+
+        $user->update(['phone_auth' => false]);
+        $this->expectExceptionMessage('Phone auth is disabled.');
+        $user->requestPhoneVerifyToken($now);
+    }
 }
