@@ -75,13 +75,13 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function validatePhoneVerifyToken(PhoneVerifyTokenRequest $request)
+    public function validatePhoneVerifyToken(PhoneVerifyTokenRequest $request, $id, $token)
     {
         /** @var User $user */
-        $user = User::findOrFail($request->id);
+        $user = User::findOrFail($id);
 
         if ($request->token === $user->phone_verify_token) {
-            $user->validatePhoneVerifyToken($request->token, Carbon::now());
+            $user->validatePhoneVerifyToken($token, Carbon::now());
             Auth::login($user, $request->remember);
             $token = $user->createToken('api-token')->plainTextToken;
             return response([

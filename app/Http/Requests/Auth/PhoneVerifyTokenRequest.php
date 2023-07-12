@@ -21,8 +21,7 @@ class PhoneVerifyTokenRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'token' => 'required|string',
+        return [           
             'remember' => 'nullable|in:0, 1'
         ];
     }

@@ -31,7 +31,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('logout', 'LoginController@logout')->middleware('auth:sanctum');
         Route::post('logout-other-devices', 'LoginController@logoutOtherDevices')->middleware('auth:sanctum');
 
-        Route::post('verify-phone-token', 'LoginController@validatePhoneVerifyToken');
+        Route::post('phone/verify/{id}/{token}', 'LoginController@validatePhoneVerifyToken');
 
         Route::post('request-password-reset-token', 'ResetPasswordController@requestPasswordResetToken');
         Route::post('change-password', 'ResetPasswordController@changePassword');
