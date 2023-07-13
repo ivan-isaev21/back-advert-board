@@ -51,7 +51,10 @@ class ResetPasswordController extends Controller
     {
         $user = User::where(['email' => $request->email])->first();
 
-        $this->service->changePasswordByToken($request, $user);
+        if ($user) {
+            $this->service->changePasswordByToken($request, $user);
+        }
+
         return response([
             'message' => 'Password success changed.'
         ], Response::HTTP_ACCEPTED);

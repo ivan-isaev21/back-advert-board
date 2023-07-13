@@ -35,7 +35,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Method verifyEmail
+     * Method verify
      *
      * @param Request $request 
      * @param User $user 
@@ -43,14 +43,14 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function verifyEmail(Request $request, $id, string $hash)
+    public function verify(Request $request, $id, string $hash)
     {
         $user = User::findOrFail($id);
 
         $this->service->verify($user, $hash);
 
         return response([
-            'message' => 'Successfully verify email'
+            'message' => 'Successfully verify email.'
         ], Response::HTTP_ACCEPTED);
     }
 }
