@@ -30,7 +30,10 @@ class ResetPasswordController extends Controller
     {
         $user = User::where(['email' => $request->email])->first();
 
-        $this->service->requestPasswordResetToken($user);
+        if ($user) {
+            $this->service->requestPasswordResetToken($user);
+        }
+
         return response([
             'message' => 'Check your email and click on the link to reset password.'
         ], Response::HTTP_ACCEPTED);
