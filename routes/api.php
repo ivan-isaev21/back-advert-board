@@ -40,4 +40,12 @@ Route::group(['prefix' => 'v1'], function () {
             Route::post('logout-other-devices', 'LoginController@logoutOtherDevices');
         });
     });
+
+    Route::group([
+        'prefix' => 'adverts',
+        'namespace' => '\App\Http\Controllers\Api\v1\Adverts'
+    ], function () {
+        Route::get('categories', 'CategoryController@index');
+        Route::get('categories/{category}', 'CategoryController@show');
+    });
 });
