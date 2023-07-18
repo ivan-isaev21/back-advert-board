@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('slug');
             $table->nestedSet();
             $table->timestamps();
+
+            $table->unique('slug');
         });
     }
 

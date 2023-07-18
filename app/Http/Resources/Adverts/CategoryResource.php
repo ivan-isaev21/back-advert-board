@@ -22,7 +22,10 @@ class CategoryResource extends JsonResource
             '_rgt' => $this->_rgt,
             'parent_id' => $this->parent_id,
             'depth' => $this->depth,
-            'children' => self::collection($this->children)
+            'path' => $this->getPath(),
+            'children' => self::collection($this->children),
+            'properties' => PropertyResource::collection($this->properties),
+            'all_properties' => $this->allProperties()
         ];
     }
 }
