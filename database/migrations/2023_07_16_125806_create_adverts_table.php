@@ -11,20 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('advert_properties', function (Blueprint $table) {
+        Schema::create('adverts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('advert_categories')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('name')->index();
-            $table->string('slug');
-            $table->string('frontend_type');
-            $table->boolean('required')->default(false);
-            $table->boolean('filterable')->default(false);
-            $table->boolean('sortable')->default(false);
-            $table->json('variants')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('advert_categories')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('title')->index();
+            $table->string('content');
             $table->timestamps();
-
-            $table->unique(['category_id', 'slug']);
         });
     }
 
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('advert_properties');
+        Schema::dropIfExists('adverts');
     }
 };

@@ -21,7 +21,9 @@ class PropertyResource extends JsonResource
             'name' => $this->name,
             'frontend_type' => $this->frontend_type,
             'required' => $this->required,
-            'filterable' => $this->filterable
+            'filterable' => $this->filterable,
+            'sortable' => $this->sortable,
+            'variants' => $this->variants
         ];
     }
 }

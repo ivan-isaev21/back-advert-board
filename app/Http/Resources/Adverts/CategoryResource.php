@@ -25,7 +25,7 @@ class CategoryResource extends JsonResource
             'path' => $this->getPath(),
             'children' => self::collection($this->children),
             'properties' => PropertyResource::collection($this->properties),
-            'all_properties' => $this->allProperties()
+            'all_properties' => PropertyResource::collection($this->allProperties())
         ];
     }
 }

@@ -28,6 +28,23 @@ services:
         ports:
             - '7502:80'
 
+    meilisearch:
+        container_name: back-advert-board-meilisearch
+        image: getmeili/meilisearch:v1.0.2
+        environment:
+            - http_proxy
+            - https_proxy
+            - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterKey}
+            - MEILI_NO_ANALYTICS=${MEILI_NO_ANALYTICS:-true}
+            - MEILI_ENV=${MEILI_ENV:-development}
+            - MEILI_LOG_LEVEL
+            - MEILI_DB_PATH=./storage/data.ms:/data.ms}
+        ports:
+            - 7503:7700
+        volumes:
+            - './:/application'
+            - ./storage/data.ms:/data.ms
+
     php-fpm:
         container_name: back-advert-board-php-fpm
         build: phpdocker/php-fpm

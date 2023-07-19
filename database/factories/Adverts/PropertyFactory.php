@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Adverts;
 
+use App\Models\Adverts\Property;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,19 @@ class PropertyFactory extends Factory
      */
     public function definition(): array
     {
+        $frontendType = fake()->randomElement(Property::getAvailableFrontendTypes());
+        $variants = (in_array($frontendType, Property::SELECT_FRONTEND_TYPES)
+            or in_array($frontendType, Property::MULTISELECT_FRONTEND_TYPES)) ? [1 => 'one',  2 => 'two', 3 => 'three']
+            : null;
+
         return [
             'category_id' => null,
             'name' => fake()->unique()->name,
             'slug' => fake()->unique()->slug(2),
-            'frontend_type' => fake()->randomElement(['checkbox', 'radio', 'text']),
+            'frontend_type' =>  $frontendType,
             'required' => fake()->boolean(),
-            'filterable' => fake()->boolean()
+            'filterable' => fake()->boolean(),
+            'variants' => $variants
         ];
     }
 }
