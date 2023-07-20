@@ -26,7 +26,7 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index2()
+    public function index()
     {
         $categories = $this->service->getCategoriesTree();
         return CategoryResource::collection($categories);
@@ -46,11 +46,11 @@ class CategoryController extends Controller
     //     return $adverts;
     // }
 
-    public function index()
-    {
-        $adverts = Advert::with(['category'])->get();
-        return AdvertResource::collection($adverts);
-    }
+    // public function index()
+    // {
+    //     $adverts = Advert::with(['category'])->get();
+    //     return AdvertResource::collection($adverts);
+    // }
     public function show(Request $request, Category $category)
     {
         return new CategoryResource($this->service->getCategoryTree($category));

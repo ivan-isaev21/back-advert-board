@@ -44,6 +44,38 @@ class Category extends Model
     }
 
     /**
+     * Method allFilterableProperties
+     *
+     * @return array
+     */
+    public function allFilterableProperties(): array
+    {
+        return array_filter(array_map(function (Property $property) {
+            if ($property->isFilterable()) {
+                return $property->id;
+            }
+        }, $this->allProperties()), function ($item) {
+            return $item !== null;
+        });
+    }
+    
+    /**
+     * Method allSortableProperties
+     *
+     * @return array
+     */
+    public function allSortableProperties(): array
+    {
+        return array_filter(array_map(function (Property $property) {
+            if ($property->isSortable()) {
+                return $property->id;
+            }
+        }, $this->allProperties()), function ($item) {
+            return $item !== null;
+        });
+    }
+
+    /**
      * Method properties
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

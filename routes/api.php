@@ -47,5 +47,6 @@ Route::group(['prefix' => 'v1'], function () {
     ], function () {
         Route::get('categories', 'CategoryController@index');
         Route::get('categories/{category}', 'CategoryController@show');
+        Route::get('search/{category?}', 'AdvertSearchController@search');
     });
 });

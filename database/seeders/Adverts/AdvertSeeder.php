@@ -48,6 +48,8 @@ class AdvertSeeder extends Seeder
      */
     private function getFakePropertyValue(Property $property): mixed
     {
+        $variants = array_keys([1 => 'one',  2 => 'two', 3 => 'three']);
+
         if ($property->isString()) {
             return fake()->word();
         } elseif ($property->isInteger()) {
@@ -57,9 +59,9 @@ class AdvertSeeder extends Seeder
         } elseif ($property->isBoolean()) {
             return fake()->boolean();
         } elseif ($property->isSelect()) {
-            return fake()->randomElement([1 => 'one',  2 => 'two', 3 => 'three']);
+            return fake()->randomElement($variants);
         } elseif ($property->isMultiSelect()) {
-            return fake()->randomElements([1 => 'one',  2 => 'two', 3 => 'three']);
+            return fake()->randomElements($variants);
         }
     }
 }

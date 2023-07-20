@@ -23,7 +23,6 @@ class PropertyFactory extends Factory
             : null;
 
         return [
-            'category_id' => null,
             'name' => fake()->unique()->name,
             'slug' => fake()->unique()->slug(2),
             'frontend_type' =>  $frontendType,

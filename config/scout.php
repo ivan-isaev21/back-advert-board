@@ -138,7 +138,7 @@ return [
         'index-settings' => [
             Advert::class => [
                 'searchableAttributes' => ['title', 'content'],
-                //'filterableAttributes' => Property::filterable()->pluck('id'),
+                'filterableAttributes' => ['user_id','category_id', 'country_id', 'division_id', 'city_id'],
                 //'sortableAttributes' => ['name', 'country_id', 'division_id']
             ],
         ],
