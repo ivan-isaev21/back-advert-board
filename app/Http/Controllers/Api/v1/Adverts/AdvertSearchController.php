@@ -21,6 +21,6 @@ class AdvertSearchController extends Controller
     {
         $adverts = $this->service->search($request, $category);
 
-        return ['total' => count($adverts), 'adverts' => AdvertResource::collection($adverts)];
+        return AdvertResource::collection($adverts);
     }
 }

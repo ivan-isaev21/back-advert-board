@@ -16,10 +16,11 @@ class AdvertResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'category' => new CategoryResource($this->category),
+            'category_id' => $this->category_id,
+            // 'category' => new CategoryResource($this->category),
             'title' => $this->title,
             'content' => $this->content,
-            'property_values' => $this->getAllPropertiesWithValues()
+            'property_values' => PropertyValueResource::collection($this->getAllPropertiesWithValues())
         ];
     }
 }

@@ -138,7 +138,7 @@ return [
         'index-settings' => [
             Advert::class => [
                 'searchableAttributes' => ['title', 'content'],
-                'filterableAttributes' => ['user_id','category_id', 'country_id', 'division_id', 'city_id'],
+                'filterableAttributes' => ['user_id', 'category_id', 'country_id', 'division_id', 'city_id', '_geo'],
                 //'sortableAttributes' => ['name', 'country_id', 'division_id']
             ],
         ],

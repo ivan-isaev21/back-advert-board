@@ -45,8 +45,15 @@ class UpdatePropertyIndex extends Command
     protected function updateFilterableProperties(Client $client): void
     {
         $filterableProperties = Property::filterable()->get()->map(function (Property $property) {
-            return 'property_values.' . $property->id;
+            return 'property_' . $property->id;
         })->toArray();
+
+        $filterableProperties[] = 'user_id';
+        $filterableProperties[] = 'category_id';
+        $filterableProperties[] = 'country_id';
+        $filterableProperties[] = 'division_id';
+        $filterableProperties[] = 'city_id';
+        $filterableProperties[] = '_geo';
 
         $client->index('adverts')->updateFilterableAttributes($filterableProperties);
 
@@ -63,8 +70,15 @@ class UpdatePropertyIndex extends Command
     protected function updateSortableProperties(Client $client): void
     {
         $sortableProperties = Property::sortable()->get()->map(function (Property $property) {
-            return 'property_values.' . $property->id;
+            return 'property_' . $property->id;
         })->toArray();
+
+        $sortableProperties[] = 'user_id';
+        $sortableProperties[] = 'category_id';
+        $sortableProperties[] = 'country_id';
+        $sortableProperties[] = 'division_id';
+        $sortableProperties[] = 'city_id';
+        $sortableProperties[] = '_geo';
 
         $client->index('adverts')->updateSortableAttributes($sortableProperties);
 

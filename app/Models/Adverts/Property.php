@@ -61,34 +61,6 @@ class Property extends Model
     }
 
     /**
-     * Method getSearchFilterValidationRule
-     *
-     * @return array
-     */
-    public function getSearchFilterValidationRule(): array
-    {
-        $rules = ['required'];
-
-        $rules['value'] = ['required'];
-
-        if ($this->isInteger()) {
-            $rules['value'][] = 'integer';
-        } elseif ($this->isString()) {
-            $rules['value'][] = 'string';
-            $rules['value'][] = 'max:255';
-        } elseif ($this->isDecimal()) {
-            $rules['value'][] = 'numeric';
-        } elseif ($this->isSelect() or $this->isMultiselect()) {
-            if (!count($this->variants) > 0) {
-                throw new \DomainException('Variants must be filled.');
-            }
-            $rules['value'][] = Rule::in(array_keys($this->variants));
-        }
-
-        return $rules;
-    }
-
-    /**
      * Method availableFrontendTypes
      *
      * @return void

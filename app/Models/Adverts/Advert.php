@@ -176,7 +176,7 @@ class Advert extends Model
      */
     public function toSearchableArray(): array
     {
-        return [
+        $data =  [
             'id' => $this->id,
             'category_id' => $this->category_id,
             'user_id' => $this->user_id,
@@ -193,8 +193,24 @@ class Advert extends Model
             'reject_reason' => $this->reject_reason,
             'published_at' => $this->published_at,
             'expires_at' => $this->expires_at,
-            'property_values' => $this->getAllPropertyValues()
+
         ];
+
+        foreach ($this->getAllPropertiesWithValues() as $item) {
+            if ($item['property']->isBoolean()) {
+                $value = (bool)$item['value'];
+            } elseif ($item['property']->isInteger()) {
+                $value = (int)$item['value'];
+            } elseif ($item['property']->isDecimal()) {
+                $value = (float)$item['value'];
+            } else {
+                $value = $item['value'];
+            }
+
+            $data['property_' . $item['property']->id] = $value;
+        }
+
+        return $data;
     }
 
     /**
@@ -256,8 +272,7 @@ class Advert extends Model
         foreach ($properties as $property) {
             if (isset($allValues[$property->id])) {
                 $propertiesWithValues[] = [
-                    'id' => $property->id,
-                    'name' => $property->name,
+                    'property' => $property,
                     'value' => $allValues[$property->id]
                 ];
             }
