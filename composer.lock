@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "324abfde73dcff7118416d4e43acf9ec",
+    "content-hash": "0f18925728910ab7a4c9ac843bd2ab03",
     "packages": [
         {
             "name": "brick/math",
@@ -2383,6 +2383,69 @@
                 "source": "https://github.com/nette/utils/tree/v4.0.0"
             },
             "time": "2023-02-02T10:41:53+00:00"
+        },
+        {
+            "name": "nevadskiy/laravel-translatable",
+            "version": "0.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nevadskiy/laravel-translatable.git",
+                "reference": "b6af23506e58f701063094597c4e4d312262f082"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nevadskiy/laravel-translatable/zipball/b6af23506e58f701063094597c4e4d312262f082",
+                "reference": "b6af23506e58f701063094597c4e4d312262f082",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "mockery/mockery": "^1.2",
+                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nevadskiy\\Translatable\\TranslatableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nevadskiy\\Translatable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nevadskiy",
+                    "email": "nevadskiy@gmail.com"
+                }
+            ],
+            "description": "Add translations to your Eloquent models",
+            "homepage": "https://github.com/nevadskiy/laravel-translatable",
+            "keywords": [
+                "database",
+                "laravel",
+                "localization",
+                "model",
+                "translation",
+                "translations"
+            ],
+            "support": {
+                "issues": "https://github.com/nevadskiy/laravel-translatable/issues",
+                "source": "https://github.com/nevadskiy/laravel-translatable/tree/0.8.1"
+            },
+            "time": "2023-02-24T17:44:55+00:00"
         },
         {
             "name": "nikic/php-parser",

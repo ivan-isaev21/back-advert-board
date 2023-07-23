@@ -155,8 +155,6 @@ class AdvertSearchService
      */
     private function getPropertyFilters(?array $properties): string|bool
     {
-
-
         if ($properties) {
             $i = 0;
             $filters = '';
