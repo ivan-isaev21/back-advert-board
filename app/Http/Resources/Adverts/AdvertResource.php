@@ -18,6 +18,16 @@ class AdvertResource extends JsonResource
             'id' => $this->id,
             'category_id' => $this->category_id,
             // 'category' => new CategoryResource($this->category),
+            'user_id' => $this->id,
+            'location'  => [
+                'country_id' => $this->country_id,
+                'division_id' => $this->division_id,
+                'city_id' => $this->city_id
+            ],
+            'geo' => [
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude
+            ],
             'title' => $this->title,
             'content' => $this->content,
             'property_values' => PropertyValueResource::collection($this->getAllPropertiesWithValues())

@@ -22,7 +22,7 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index2()
+    public function index()
     {
         $categories = $this->service->getCategoriesTree();
         return CategoryResource::collection($categories);

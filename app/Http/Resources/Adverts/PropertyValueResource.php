@@ -24,7 +24,7 @@ class PropertyValueResource extends JsonResource
             'filterable' => $this['property']->filterable,
             'sortable' => $this['property']->sortable,
             'variants' => $this['property']->variants,
-            'value' => $this['value']
+            'raw_value' => $this['value'],
         ];
     }
 }
