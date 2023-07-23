@@ -7,6 +7,9 @@ services:
         container_name: back-advert-board-mariadb
         image: 'mariadb:10.6'
         working_dir: /application
+        networks:
+            - default
+            - advert-board-all
         volumes:
             - './:/application'
             - './storage/mysql-data:/var/lib/mysql/' #Save db-data to disc
@@ -22,6 +25,9 @@ services:
         container_name: back-advert-board-webserver
         image: 'nginx:alpine'
         working_dir: /application
+        networks:
+            - default
+            - advert-board-all
         volumes:
             - './:/application'
             - './phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
@@ -41,6 +47,9 @@ services:
             - MEILI_DB_PATH=./storage/data.ms:/data.ms}
         ports:
             - 7503:7700
+        networks:
+            - default
+            - advert-board-all
         volumes:
             - './:/application'
             - ./storage/data.ms:/data.ms
@@ -49,6 +58,12 @@ services:
         container_name: back-advert-board-php-fpm
         build: phpdocker/php-fpm
         working_dir: /application
+        networks:
+            - default
+            - advert-board-all
         volumes:
             - './:/application'
             - './phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
+networks:
+    advert-board-all:
+        external: true
