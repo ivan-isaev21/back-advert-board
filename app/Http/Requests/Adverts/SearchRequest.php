@@ -28,9 +28,9 @@ class SearchRequest extends FormRequest
             'search' => 'nullable',
 
             'location' => ['sometimes', 'missing_with:geo'],
-            'location.country_id' => ['sometimes', 'required', 'integer'],
-            'location.division_id' => ['sometimes', 'required', 'integer'],
-            'location.city_id' => ['sometimes', 'required', 'integer'],
+            'location.country_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.countries,id'],
+            'location.division_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.divisions,id'],
+            'location.city_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.cities,id'],
 
             'geo' => ['sometimes', 'missing_with:location'],
             'geo.latitude' => 'required_with:geo|decimal:0,7|between:-90,90',
