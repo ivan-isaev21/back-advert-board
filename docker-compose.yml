@@ -66,4 +66,4 @@ services:
             - './phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
 networks:
     advert-board-all:
-        external: true
+        driver: bridge
