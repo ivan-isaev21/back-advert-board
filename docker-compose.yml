@@ -49,7 +49,6 @@ services:
             - 7503:7700
         networks:
             - default
-            - advert-board-all
         volumes:
             - './:/application'
             - ./storage/data.ms:/data.ms
@@ -66,4 +65,4 @@ services:
             - './phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
 networks:
     advert-board-all:
-        driver: bridge
+        external: true
