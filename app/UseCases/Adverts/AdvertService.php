@@ -2,15 +2,28 @@
 
 namespace App\UseCases\Adverts;
 
+use App\Events\Adverts\Closed;
+use App\Events\Adverts\Created;
+use App\Events\Adverts\Deleted;
+use App\Events\Adverts\SendToModeration;
+use App\Events\Adverts\Updated;
 use App\Http\Requests\Adverts\CreateRequest;
 use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
 use App\Models\Geo\City;
 use App\Models\User;
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Support\Facades\DB;
 
 class AdvertService
 {
+    private $dispatcher;
+
+    public function __construct(Dispatcher $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
     /**
      * Method create
      *
@@ -39,6 +52,7 @@ class AdvertService
             $advert->save();
 
             $this->createPropertyValues($request, $category, $advert);
+            $this->dispatcher->dispatch(new Created($advert));
 
             return $advert;
         });
@@ -72,6 +86,7 @@ class AdvertService
 
             $advert->clearAllPropertyValues();
             $this->createPropertyValues($request, $category, $advert);
+            $this->dispatcher->dispatch(new Updated($advert));
 
             return $advert;
         });
@@ -91,6 +106,7 @@ class AdvertService
         DB::transaction(function () use ($advert) {
             $advert->clearAllPropertyValues();
             $advert->delete();
+            $this->dispatcher->dispatch(new Deleted($advert));
         });
     }
 
@@ -105,6 +121,7 @@ class AdvertService
     {
         DB::transaction(function () use ($advert) {
             $advert->sendToModeration();
+            $this->dispatcher->dispatch(new SendToModeration($advert));
         });
     }
 
@@ -112,6 +129,7 @@ class AdvertService
     {
         DB::transaction(function () use ($advert) {
             $advert->close();
+            $this->dispatcher->dispatch(new Closed($advert));
         });
     }
 

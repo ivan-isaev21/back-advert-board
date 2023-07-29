@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Adverts;
 
+use App\Models\Adverts\Advert;
 use App\Models\Adverts\Property;
 use DomainException;
 use Illuminate\Foundation\Http\FormRequest;
@@ -35,7 +36,10 @@ class SearchRequest extends FormRequest
             'geo' => ['sometimes', 'missing_with:location'],
             'geo.latitude' => 'required_with:geo|decimal:0,7|between:-90,90',
             'geo.longitude' => 'required_with:geo|decimal:0,7|between:-180,180',
-            'geo.radius' => 'required_with:geo|in:0,2,5,10,15,30,50,75,100'
+            'geo.radius' => 'required_with:geo|in:0,2,5,10,15,30,50,75,100',
+
+            'statuses' => 'sometimes|array',
+            'statuses.*' => Rule::in(Advert::STATUS_ACTIVE, Advert::STATUS_CLOSED, Advert::STATUS_DRAFT, Advert::STATUS_MODERATION),
         ];
 
         if ($this->properties) {

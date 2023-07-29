@@ -43,6 +43,23 @@ class AdvertController extends Controller
     }
 
     /**
+     * Method myAdverts
+     *
+     * @param SearchRequest $request 
+     * @param ?Category $category 
+     *
+     * @return Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function myAdverts(SearchRequest $request, ?Category $category): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $statuses = $request->statuses ?? null;
+        $user = $request->user();
+        $adverts = $this->searchService->search($request, $category, $statuses, $user);
+
+        return AdvertResource::collection($adverts);
+    }
+
+    /**
      * Method create
      *
      * @param CreateRequest $request 
