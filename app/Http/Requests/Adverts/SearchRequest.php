@@ -44,7 +44,7 @@ class SearchRequest extends FormRequest
                 throw new DomainException('Для фильтрации по параметрам нужно указать категорию.');
             }
 
-            $rules['properties'] = ['nullable', function ($attribute, $value, $fail) {
+            $rules['properties'] = ['sometimes', function ($attribute, $value, $fail) {
                 $this->validationMustBeFilterable($attribute, $value, $fail);
             }];
 

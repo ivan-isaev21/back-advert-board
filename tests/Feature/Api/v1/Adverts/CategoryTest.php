@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\v1\Auth;
+namespace Tests\Feature\Api\v1\Adverts;
 
 use App\Models\Adverts\Category;
 use App\Models\User;
@@ -22,7 +22,7 @@ class CategoryTest extends TestCase
         $response = $this->get($this->categoriesUrl);
         $response->assertStatus(200);
     }
-    
+
     /**
      * Method testCategory
      *

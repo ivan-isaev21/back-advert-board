@@ -5,13 +5,15 @@ namespace App\UseCases\Adverts;
 use App\Http\Requests\Adverts\SearchRequest;
 use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
+use App\Models\User;
 use MeiliSearch\Endpoints\Indexes;
 
 class AdvertSearchService
 {
-    public function search(SearchRequest $request, ?Category $category)
+    public function search(SearchRequest $request, ?Category $category, ?array $statuses, ?User $user)
     {
         $filters = $this->getFilters($request->properties ?? null, $request->location ?? null, $request->geo ?? null);
+
 
         if ($request->search or $filters) {
             $query = Advert::search('', function (Indexes $meiliSearch, $query, $options) use ($request, $filters) {
@@ -36,6 +38,14 @@ class AdvertSearchService
                 [$category->id],
                 $category->descendants()->pluck('id')->toArray()
             ));
+        }
+
+        if ($statuses) {
+            $query->whereIn('status', $statuses);
+        }
+
+        if ($user) {
+            $query->where('user_id', $user->id);
         }
 
         //$adverts = $query->paginate(15);

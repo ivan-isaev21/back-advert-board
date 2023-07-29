@@ -169,6 +169,14 @@ class Advert extends Model
         return $this->status === self::STATUS_CLOSED;
     }
 
+    // public function toSearchableArray()
+    // {
+    //     return [
+    //         'id' => $this->id,
+    //         'title' => $this->title
+    //     ];
+    // }
+
     /**
      * Method toSearchableArray
      *
@@ -183,10 +191,6 @@ class Advert extends Model
             'country_id' => $this->country_id,
             'division_id' => $this->division_id,
             'city_id' => $this->city_id,
-            '_geo' => [
-                'lat' => $this->latitude,
-                'lng' => $this->longitude
-            ],
             'title' => $this->title,
             'content' => $this->content,
             'status' => $this->status,
@@ -195,6 +199,13 @@ class Advert extends Model
             'expires_at' => $this->expires_at,
 
         ];
+
+        if ($this->latitude != null and $this->longitude != null) {
+            $data['_geo'] = [
+                'lat' => $this->latitude,
+                'lng' => $this->longitude
+            ];
+        }
 
         foreach ($this->getAllPropertiesWithValues() as $item) {
             if ($item['property']->isBoolean()) {
@@ -237,6 +248,21 @@ class Advert extends Model
         }
 
         throw new \DomainException('Undefined property frontend_type = ' . $property->frontend_type);
+    }
+
+
+    /**
+     * Method clearAllPropertyValues
+     *
+     * @return void
+     */
+    public function clearAllPropertyValues(): void
+    {
+        $this->integerValues()->delete();
+        $this->stringValues()->delete();
+        $this->booleanValues()->delete();
+        $this->decimalValues()->delete();
+        $this->jsonValues()->delete();
     }
 
     /**

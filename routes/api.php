@@ -47,6 +47,14 @@ Route::group(['prefix' => 'v1'], function () {
     ], function () {
         Route::get('categories', 'CategoryController@index');
         Route::get('categories/{category}', 'CategoryController@show');
-        Route::get('search/{category?}', 'AdvertSearchController@search');
+        Route::get('/{category?}', 'AdvertController@index');
+
+        Route::group(['middleware' => 'auth:sanctum'], function () {
+            Route::post('/{category}', 'AdvertController@create');
+            Route::put('/{category}/{advert}', 'AdvertController@update');
+            Route::put('/{category}/{advert}/send-to-moderation', 'AdvertController@sendToModeration');
+            Route::put('/{category}/{advert}/close', 'AdvertController@close');
+            Route::delete('/{category}/{advert}', 'AdvertController@destroy');
+        });
     });
 });
