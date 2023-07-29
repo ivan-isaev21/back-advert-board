@@ -12,7 +12,7 @@ use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
 use App\Models\Geo\City;
 use App\Models\User;
-use Illuminate\Bus\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
 
 class AdvertService
@@ -125,6 +125,13 @@ class AdvertService
         });
     }
 
+    /**
+     * Method close
+     *
+     * @param Advert $advert 
+     *
+     * @return void
+     */
     public function close(Advert $advert): void
     {
         DB::transaction(function () use ($advert) {
