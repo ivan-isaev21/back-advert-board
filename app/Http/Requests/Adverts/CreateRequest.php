@@ -33,7 +33,10 @@ class CreateRequest extends FormRequest
             'geo.longitude' => 'required_with:geo|decimal:0,7|between:-180,180',
 
             'title' => 'required|max:255',
-            'content' => 'required|max:255'
+            'content' => 'required|max:255',
+
+            'images' => 'sometimes|required|array|max:5',
+            'images.*.file' =>  'required_with:images|mimes:jpg,png,gif|max:5120',
         ];
 
         foreach ($this->category->allProperties() as $property) {

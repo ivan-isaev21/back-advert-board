@@ -30,6 +30,7 @@ class AdvertResource extends JsonResource
             ],
             'title' => $this->title,
             'content' => $this->content,
+            'images' => $this->images,
             'property_values' => PropertyValueResource::collection($this->getAllPropertiesWithValues())
         ];
     }

@@ -10,6 +10,7 @@ use App\Events\Adverts\Updated;
 use App\Http\Requests\Adverts\CreateRequest;
 use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
+use App\Models\Adverts\Image;
 use App\Models\Geo\City;
 use App\Models\User;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -18,10 +19,12 @@ use Illuminate\Support\Facades\DB;
 class AdvertService
 {
     private $dispatcher;
+    private $imageService;
 
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(Dispatcher $dispatcher, ImageService $imageService)
     {
         $this->dispatcher = $dispatcher;
+        $this->imageService = $imageService;
     }
 
     /**
@@ -51,6 +54,7 @@ class AdvertService
             $advert->status = Advert::STATUS_DRAFT;
             $advert->save();
 
+            $this->createImages($request, $advert);
             $this->createPropertyValues($request, $category, $advert);
             $this->dispatcher->dispatch(new Created($advert));
 
@@ -84,8 +88,8 @@ class AdvertService
             $advert->content = $request->content;
             $advert->save();
 
-            $advert->clearAllPropertyValues();
-            $this->createPropertyValues($request, $category, $advert);
+            $this->updateImages($request, $advert);
+            $this->updatePropertyValues($request, $category, $advert);
             $this->dispatcher->dispatch(new Updated($advert));
 
             return $advert;
@@ -104,6 +108,7 @@ class AdvertService
     public function delete(Advert $advert): void
     {
         DB::transaction(function () use ($advert) {
+            $this->clearImages($advert);
             $advert->clearAllPropertyValues();
             $advert->delete();
             $this->dispatcher->dispatch(new Deleted($advert));
@@ -138,6 +143,68 @@ class AdvertService
             $advert->close();
             $this->dispatcher->dispatch(new Closed($advert));
         });
+    }
+
+    /**
+     * Method updateImages
+     *
+     * @param CreateRequest $request 
+     * @param Advert $advert 
+     *
+     * @return void
+     */
+    private function updateImages(CreateRequest $request, Advert $advert): void
+    {
+        $this->clearImages($advert);
+        $this->createImages($request, $advert);
+    }
+
+    /**
+     * Method createImages
+     *
+     * @param CreateRequest $request 
+     * @param Advert $advert 
+     *
+     * @return void
+     */
+    private function createImages(CreateRequest $request, Advert $advert): void
+    {
+        if (isset($request->images)) {
+            $files = $request->file('images');
+            foreach ($files as $key => $file) {
+                $this->imageService->create($advert, $file['file']);
+            }
+        }
+    }
+
+    /**
+     * Method clearImages
+     *
+     * @param Advert $advert
+     *
+     * @return void
+     */
+    private function clearImages(Advert $advert): void
+    {
+        $advert->images()->each(function (Image $image) {
+            $this->imageService->delete($image);
+        });
+    }
+
+
+    /**
+     * Method updatePropertyValues
+     *
+     * @param CreateRequest $request 
+     * @param Category $category 
+     * @param Advert $advert 
+     *
+     * @return void
+     */
+    private function updatePropertyValues(CreateRequest $request, Category $category, Advert $advert): void
+    {
+        $advert->clearAllPropertyValues();
+        $this->createPropertyValues($request, $category, $advert);
     }
 
     /**

@@ -169,14 +169,6 @@ class Advert extends Model
         return $this->status === self::STATUS_CLOSED;
     }
 
-    // public function toSearchableArray()
-    // {
-    //     return [
-    //         'id' => $this->id,
-    //         'title' => $this->title
-    //     ];
-    // }
-
     /**
      * Method toSearchableArray
      *
@@ -325,6 +317,16 @@ class Advert extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    /**
+     * Method images
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images()
+    {
+        return $this->hasMany(Image::class, 'advert_id', 'id');
     }
 
     /**
