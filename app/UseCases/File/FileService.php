@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Storage;
 
 class FileService
 {
-
     /**
      * Method getFileHash
      *
@@ -22,7 +21,7 @@ class FileService
         return $hash ?? '';
     }
 
-        
+
     /**
      * Method saveFile
      *

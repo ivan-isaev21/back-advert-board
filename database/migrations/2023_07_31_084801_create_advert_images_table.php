@@ -21,6 +21,7 @@ return new class extends Migration
 
             $table->foreign('advert_id')->references('id')->on('adverts')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unique(['advert_id', 'file_path']);
+            $table->index('file_hash');
         });
     }
 
