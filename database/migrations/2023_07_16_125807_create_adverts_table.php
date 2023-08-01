@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('advert_categories')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->unsignedBigInteger('user_id');
+            $table->string('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->unsignedBigInteger('division_id')->nullable();
