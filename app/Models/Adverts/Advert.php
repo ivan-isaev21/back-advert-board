@@ -298,6 +298,25 @@ class Advert extends Model
     }
 
     /**
+     * Method isAvailableToShow
+     *
+     * @param ?User $user 
+     *
+     * @return bool
+     */
+    public function isAvailableToShow(?User $user): bool
+    {
+        if ($user and $user->id == $this->user_id) {
+            return true;
+        } elseif ($user and ($user->isAdmin() or $user->isModerator())) {
+            return true;
+        } elseif ($this->isActive() or $this->isClosed()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Method user
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

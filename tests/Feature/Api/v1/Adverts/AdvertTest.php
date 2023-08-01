@@ -38,242 +38,27 @@ class AdvertTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /**
-     * Method testEmptyCreate
-     *
-     * @return void
-     */
-    public function testEmptyCreate(): void
-    {
-        $payload = [];
-        $createUrl = $this->advertsUrl . $this->category->id;
-        $response = $this->postJson($createUrl, $payload, $this->headers);
-        $response->assertStatus(422);
-    }
 
-    /**
-     * Method testSuccessCreate
-     *
-     * @return void
-     */
-    public function testSuccessCreate(): void
-    {
-        $payload = [
-            'title' => 'Test advert',
-            'content' => 'Test content',
-            'category_id' => $this->category->id,
-            'properties' => [
-                1 => 'test'
-            ]
-        ];
-
-        $createUrl = $this->advertsUrl . $this->category->id;
-        $response = $this->postJson($createUrl, $payload, $this->headers);
-        $response->assertStatus(201);
-    }
-
-    /**
-     * Method testEmptyUpdate
-     *
-     * @return void
-     */
-    public function testEmptyUpdate(): void
-    {
-        $payload = [];
-        $updateUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id;
-        $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(422);
-    }
-
-    /**
-     * Method testAnotherUserUpdate
-     *
-     * @return void
-     */
-    public function testAnotherUserUpdate(): void
-    {
-        $this->advert->update(['user_id' => $this->anotherUser->id]);
-
-        $payload = [
-            'title' => 'Test advert update',
-            'content' => 'Test content  update',
-            'category_id' => $this->category->id,
-            'properties' => [
-                1 => 'test update'
-            ]
-        ];
-
-
-        $updateUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id;
-        $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
-    }
-
-    /**
-     * Method testIsNotDraftUpdate
-     *
-     * @return void
-     */
-    public function testIsNotDraftUpdate(): void
-    {
-        $this->advert->update(['status' => Advert::STATUS_ACTIVE]);
-
-        $payload = [
-            'title' => 'Test advert update',
-            'content' => 'Test content  update',
-            'category_id' => $this->category->id,
-            'properties' => [
-                1 => 'test update'
-            ]
-        ];
-
-        $updateUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id;
-        $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not draft.']);
-    }
-
-    /**
-     * Method testSuccessUpdate
-     *
-     * @return void
-     */
-    public function testSuccessUpdate(): void
-    {
-        $payload = [
-            'title' => 'Test advert update',
-            'content' => 'Test content  update',
-            'category_id' => $this->category->id,
-            'properties' => [
-                1 => 'test update'
-            ]
-        ];
-
-        $updateUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id;
-        $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(202);
-    }
-
-    /**
-     * Method testAnotherUserSendToModeration
-     *
-     * @return void
-     */
-    public function testAnotherUserSendToModeration(): void
+    public function testNotAvailableToShow(): void
     {
         $this->advert->update([
-            'user_id' => $this->anotherUser->id
-        ]);
-
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/send-to-moderation';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
-    }
-
-    /**
-     * Method testAdvertIsNotDraftSendToModeration
-     *
-     * @return void
-     */
-    public function testAdvertIsNotDraftSendToModeration(): void
-    {
-        $this->advert->update([
-            'status' => Advert::STATUS_ACTIVE
-        ]);
-
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/send-to-moderation';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'Advert is not draft.']);
-    }
-
-
-    /**
-     * Method testSuccessSendToModeration
-     *
-     * @return void
-     */
-    public function testSuccessSendToModeration(): void
-    {
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/send-to-moderation';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(202);
-    }
-
-    /**
-     * Method testAnotherUserClose
-     *
-     * @return void
-     */
-    public function testAnotherUserClose(): void
-    {
-        $this->advert->update([
-            'user_id' => $this->anotherUser->id
-        ]);
-
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
-    }
-
-    /**
-     * Method testAdvertIsDraftClose
-     *
-     * @return void
-     */
-    public function testAdvertIsDraftClose(): void
-    {
-        $this->advert->update([
+            'user_id' => $this->anotherUser->id,
             'status' => Advert::STATUS_DRAFT
         ]);
 
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
+        $showUrl = $this->advertsUrl . 'show/' . $this->advert->id;
+        $response = $this->getJson($showUrl);
         $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is draft.']);
+        $response->assertJson(['message' => 'This advert is not available to show.']);
     }
 
-    /**
-     * Method testAdvertIsAlreadyClosed
-     *
-     * @return void
-     */
-    public function testAdvertIsAlreadyClosed(): void
+
+    public function testSuccessShow(): void
     {
-        $this->advert->update([
-            'status' => Advert::STATUS_CLOSED
-        ]);
-
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is already closed.']);
-    }
-
-    /**
-     * Method testSuccessClosed
-     *
-     * @return void
-     */
-    public function testSuccessClosed(): void
-    {
-        $this->advert->update([
-            'status' => Advert::STATUS_ACTIVE
-        ]);
-
-        $payload = [];
-        $sendToModerationUrl = $this->advertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
-        $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(202);
+        $this->advert->update(['status' => Advert::STATUS_ACTIVE]);
+        $showUrl = $this->advertsUrl . 'show/' . $this->advert->id;
+        $response = $this->getJson($showUrl);
+        $response->assertStatus(200);
     }
 
     /**

@@ -27,17 +27,17 @@ Route::group(['prefix' => 'v1'], function () {
     ], function () {
 
         Route::group(['middleware' => 'guest'], function () {
-            Route::post('register', 'RegisterController@register');
-            Route::post('login', 'LoginController@login');
-            Route::post('phone/verify/{id}/{token}', 'LoginController@validatePhoneVerifyToken');
-            Route::post('request-password-reset-token', 'ResetPasswordController@requestPasswordResetToken');
-            Route::post('change-password', 'ResetPasswordController@changePassword');
-            Route::post('email/verify/{id}/{hash}', 'RegisterController@verify');
+            Route::post('register', 'RegisterController@register')->name('Auth.register');
+            Route::post('login', 'LoginController@login')->name('Auth.login');
+            Route::post('phone/verify/{id}/{token}', 'LoginController@validatePhoneVerifyToken')->name('Auth.validatePhoneVerifyToken');
+            Route::post('request-password-reset-token', 'ResetPasswordController@requestPasswordResetToken')->name('Auth.requestPasswordResetToken');
+            Route::post('change-password', 'ResetPasswordController@changePassword')->name('Auth.changePassword');
+            Route::post('email/verify/{id}/{hash}', 'RegisterController@verify')->name('Auth.validateEmailVerifyToken');
         });
 
         Route::group(['middleware' => 'auth:sanctum'], function () {
-            Route::post('logout', 'LoginController@logout');
-            Route::post('logout-other-devices', 'LoginController@logoutOtherDevices');
+            Route::post('logout', 'LoginController@logout')->name('Auth.logout');
+            Route::post('logout-other-devices', 'LoginController@logoutOtherDevices')->name('Auth.logoutOtherDevices');
         });
     });
 
@@ -46,17 +46,19 @@ Route::group(['prefix' => 'v1'], function () {
         'namespace' => '\App\Http\Controllers\Api\v1\Adverts'
     ], function () {
 
-        Route::group(['middleware' => 'auth:sanctum'], function () {
-            Route::get('me/{category?}', 'AdvertController@myAdverts');
-            Route::post('{category}', 'AdvertController@create');
-            Route::put('{category}/{advert}', 'AdvertController@update');
-            Route::put('{category}/{advert}/send-to-moderation', 'AdvertController@sendToModeration');
-            Route::put('{category}/{advert}/close', 'AdvertController@close');
-            Route::delete('{category}/{advert}', 'AdvertController@destroy');
+        Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'me'], function () {
+            Route::get('{category?}', 'MyAdvertController@index')->name('Adverts.me.list');
+            Route::post('{category}', 'MyAdvertController@create')->name('Adverts.me.create');
+            Route::put('{category}/{advert}', 'MyAdvertController@update')->name('Adverts.me.update');
+            Route::put('{category}/{advert}/send-to-moderation', 'MyAdvertController@sendToModeration')->name('Adverts.me.sendToModeration');
+            Route::put('{category}/{advert}/close', 'MyAdvertController@close')->name('Adverts.me.close');
+            Route::delete('{category}/{advert}', 'MyAdvertController@destroy')->name('Adverts.me.destroy');
         });
 
-        Route::get('categories', 'CategoryController@index');
-        Route::get('categories/{category}', 'CategoryController@show');
-        Route::get('{category?}', 'AdvertController@index');
+        Route::get('user/{user}/{category?}', 'AdvertController@userAdverts')->name('Adverts.user.list');
+        Route::get('categories', 'CategoryController@index')->name('Adverts.categories.list');
+        Route::get('categories/{category}', 'CategoryController@show')->name('Adverts.categories.show');
+        Route::get('show/{advert}', 'AdvertController@show')->name('Adverts.show');
+        Route::get('{category?}', 'AdvertController@index')->name('Adverts.list');
     });
 });
