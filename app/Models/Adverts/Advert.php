@@ -9,6 +9,7 @@ use App\Models\Adverts\Values\IntegerValue;
 use App\Models\Adverts\Values\JsonValue;
 use App\Models\Adverts\Values\StringValue;
 use App\Models\User;
+use App\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Advert extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory, Searchable, UsesUuid;
 
     protected $table = 'adverts';
     protected $fillable = [
@@ -62,9 +63,6 @@ class Advert extends Model
             throw new \DomainException('Advert is not draft.');
         }
 
-        // if (!\count($this->photos)) {
-        //     throw new \DomainException('Upload photos.');
-        // }
         $this->update([
             'status' => self::STATUS_MODERATION,
         ]);
