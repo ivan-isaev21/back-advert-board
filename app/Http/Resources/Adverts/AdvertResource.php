@@ -18,7 +18,7 @@ class AdvertResource extends JsonResource
             'id' => $this->id,
             'category_id' => $this->category_id,
             // 'category' => new CategoryResource($this->category),
-            'user_id' => $this->id,
+            'user_id' => $this->user_id,
             'location'  => [
                 'country_id' => $this->country_id,
                 'division_id' => $this->division_id,

@@ -45,16 +45,18 @@ Route::group(['prefix' => 'v1'], function () {
         'prefix' => 'adverts',
         'namespace' => '\App\Http\Controllers\Api\v1\Adverts'
     ], function () {
-        Route::get('categories', 'CategoryController@index');
-        Route::get('categories/{category}', 'CategoryController@show');
-        Route::get('/{category?}', 'AdvertController@index');
 
         Route::group(['middleware' => 'auth:sanctum'], function () {
-            Route::post('/{category}', 'AdvertController@create');
-            Route::put('/{category}/{advert}', 'AdvertController@update');
-            Route::put('/{category}/{advert}/send-to-moderation', 'AdvertController@sendToModeration');
-            Route::put('/{category}/{advert}/close', 'AdvertController@close');
-            Route::delete('/{category}/{advert}', 'AdvertController@destroy');
+            Route::get('me/{category?}', 'AdvertController@myAdverts');
+            Route::post('{category}', 'AdvertController@create');
+            Route::put('{category}/{advert}', 'AdvertController@update');
+            Route::put('{category}/{advert}/send-to-moderation', 'AdvertController@sendToModeration');
+            Route::put('{category}/{advert}/close', 'AdvertController@close');
+            Route::delete('{category}/{advert}', 'AdvertController@destroy');
         });
+
+        Route::get('categories', 'CategoryController@index');
+        Route::get('categories/{category}', 'CategoryController@show');
+        Route::get('{category?}', 'AdvertController@index');
     });
 });
