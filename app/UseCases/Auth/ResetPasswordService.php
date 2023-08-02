@@ -43,7 +43,7 @@ class ResetPasswordService
         });
     }
 
-       
+
     /**
      * Method changePasswordByToken
      *
@@ -60,7 +60,7 @@ class ResetPasswordService
 
             if ($user->isPhoneVerified()) {
                 $this->smsSender->send($user->phone, 'Your password has been changed ToDo text.');
-            }   
+            }
 
             $user->tokens()->delete();
 

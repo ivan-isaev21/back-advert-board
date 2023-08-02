@@ -16,13 +16,13 @@ class RegisterTest extends TestCase
     public function testRegister(): void
     {
         $user = User::register(
-            $name = 'name',
+            $contactPerson = 'contact person',
             $email = 'email',
             $password = 'password'
         );
 
         $this->assertNotEmpty($user);
-        $this->assertEquals($name, $user->name);
+        $this->assertEquals($contactPerson, $user->contact_person);
         $this->assertEquals($email, $user->email);
         $this->assertNotEmpty($user->password);
         $this->assertNotEquals($password, $user->password);
@@ -39,7 +39,7 @@ class RegisterTest extends TestCase
      */
     public function testVerify()
     {
-        $user = User::register('name', 'email', 'password');
+        $user = User::register('contact person', 'email', 'password');
         $user->verify();
         $this->assertFalse($user->isWait());
         $this->assertTrue($user->isActive());
@@ -52,7 +52,7 @@ class RegisterTest extends TestCase
      */
     public function testAlreadyVerified()
     {
-        $user = User::register('name', 'email', 'password');
+        $user = User::register('contact person', 'email', 'password');
         $user->verify();
         $this->expectExceptionMessage('User is already verified.');
         $user->verify();

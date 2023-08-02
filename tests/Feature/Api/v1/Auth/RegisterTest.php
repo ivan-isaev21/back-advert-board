@@ -21,9 +21,9 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The name field is required. (and 2 more errors)',
+            'message' => 'The contact person field is required. (and 2 more errors)',
             'errors' => [
-                'name' => ['The name field is required.'],
+                'contact_person' => ['The contact person field is required.'],
                 'email' => ['The email field is required.'],
                 'password' => ['The password field is required.'],
             ]
@@ -38,7 +38,7 @@ class RegisterTest extends TestCase
     public function testSuccess(): void
     {
         $payload = [
-            'name' => 'test',
+            'contact_person' => 'test',
             'email' => 'test-email@test.com',
             'password' => 'Aa123456789',
             'password_confirmation' => 'Aa123456789'
@@ -60,7 +60,7 @@ class RegisterTest extends TestCase
     public function testAlreadyRegistered(): void
     {
         $payload = [
-            'name' => 'test',
+            'contact_person' => 'test',
             'email' => 'test-email@test.com',
             'password' => 'Aa123456789',
             'password_confirmation' => 'Aa123456789'

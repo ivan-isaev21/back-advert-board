@@ -30,7 +30,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'verify_token', 'status', 'role',
+        'contact_person', 'email', 'phone', 'password', 'verify_token', 'status', 'role',
     ];
 
     /**
@@ -75,15 +75,15 @@ class User extends Authenticatable
     /**
      * Method register
      *
-     * @param string $name 
+     * @param string $contact_person
      * @param string $email 
      * @param string $password 
      * @return self
      */
-    public static function register(string $name, string $email, string $password): self
+    public static function register(string $contactPerson, string $email, string $password): self
     {
         return static::create([
-            'name' => $name,
+            'contact_person' => $contactPerson,
             'email' => $email,
             'password' => $password,
             'verify_token' => Str::uuid(),
