@@ -23,7 +23,7 @@ class UserFactory extends Factory
         $phoneActive = fake()->boolean();
 
         return [
-            'contact_person' => fake()->name(),
+            'login' => fake()->word() . Str::random(3),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'phone' => fake()->unique()->phoneNumber,

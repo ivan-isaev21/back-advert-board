@@ -33,7 +33,7 @@ class RegisterService
     {
         DB::transaction(function () use ($request) {
             $user = User::register(
-                $request->contact_person,
+                $request->login,
                 $request->email,
                 $request->password
             );
