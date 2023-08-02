@@ -39,6 +39,11 @@ class AdvertTest extends TestCase
     }
 
 
+    /**
+     * Method testNotAvailableToShow
+     *
+     * @return void
+     */
     public function testNotAvailableToShow(): void
     {
         $this->advert->update([
@@ -53,6 +58,11 @@ class AdvertTest extends TestCase
     }
 
 
+    /**
+     * Method testSuccessShow
+     *
+     * @return void
+     */
     public function testSuccessShow(): void
     {
         $this->advert->update(['status' => Advert::STATUS_ACTIVE]);
