@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('advert_property_integer_values', function (Blueprint $table) {
-            $table->id();     
-            $table->string('advert_id');
+            $table->id();
+            $table->uuid('advert_id');
             $table->unsignedBigInteger('property_id');
             $table->integer('value');
             $table->timestamps();

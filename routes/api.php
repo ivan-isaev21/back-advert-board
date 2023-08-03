@@ -61,4 +61,15 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('show/{advert}', 'AdvertController@show')->name('Adverts.show');
         Route::get('{category?}', 'AdvertController@index')->name('Adverts.list');
     });
+
+    Route::group(['prefix' => 'profiles', 'namespace' => '\App\Http\Controllers\Api\v1\Profiles'], function () {
+
+        Route::group(['prefix' => 'me', 'middleware' => 'auth:sanctum'], function () {
+            Route::post('avatar', 'AvatarController@create')->name('Profiles.me.avatar.create');
+            Route::delete('avatar', 'AvatarController@destroy')->name('Profiles.me.avatar.delete');
+            Route::put('request-сhange-phone', 'PhoneController@requestChangePhone')->name('Profiles.me.requestChangePhone');
+            Route::put('verify-phone', 'PhoneController@verifyPhone')->name('Profiles.me.verifyPhone');
+            Route::put('/', 'ProfileController@update')->name('Profiles.me.update');
+        });
+    });
 });

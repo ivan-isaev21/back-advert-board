@@ -25,23 +25,6 @@ class PhoneTest extends TestCase
     }
 
     /**
-     * Method test_request_empty_phone
-     *
-     * @return void
-     */
-    public function testRequestEmptyPhone()
-    {
-        $user = User::factory()->create([
-            'phone' => null,
-            'phone_verified' => false,
-            'phone_verify_token' => null,
-        ]);
-
-        $this->expectExceptionMessage('Phone number is empty.');
-        $user->requestPhoneVerification(Carbon::now());
-    }
-
-    /**
      * Method test_request
      *
      * @return void
@@ -49,37 +32,16 @@ class PhoneTest extends TestCase
     public function testRequest()
     {
         $user = User::factory()->create([
-            'phone' => '+380000000000',
             'phone_verified' => false,
             'phone_verify_token' => null,
         ]);
 
-        $token = $user->requestPhoneVerification(Carbon::now());
+        $phone = '+380000000000';
+
+        $token = $user->requestPhoneVerification($phone, Carbon::now());
 
         $this->assertFalse($user->isPhoneVerified());
         $this->assertNotEmpty($token);
-    }
-
-    /**
-     * Method testRequestWithOldPhone
-     *
-     * @return void
-     */
-    public function testRequestWithOldPhone()
-    {
-        $user = User::factory()->create([
-            'phone' => '+380000000000',
-            'phone_verified' => true,
-            'phone_verify_token' => null,
-        ]);
-
-
-        $this->assertTrue($user->isPhoneVerified());
-
-        $user->requestPhoneVerification(Carbon::now());
-
-        $this->assertFalse($user->isPhoneVerified());
-        $this->assertNotEmpty($user->phone_verify_token);
     }
 
     /**
@@ -95,8 +57,10 @@ class PhoneTest extends TestCase
             'phone_verify_token' => null,
         ]);
 
-        $user->requestPhoneVerification($now = Carbon::now());
-        $user->requestPhoneVerification($now->copy()->addSeconds(500));
+        $newPhone = '+380999000000';
+
+        $user->requestPhoneVerification($newPhone, $now = Carbon::now());
+        $user->requestPhoneVerification($newPhone, $now->copy()->addSeconds(500));
 
         self::assertFalse($user->isPhoneVerified());
     }
@@ -113,11 +77,11 @@ class PhoneTest extends TestCase
             'phone_verified' => true,
             'phone_verify_token' => null,
         ]);
-
-        $user->requestPhoneVerification($now = Carbon::now());
+        $newPhone = '+380999000000';
+        $user->requestPhoneVerification($newPhone, $now = Carbon::now());
 
         $this->expectExceptionMessage('Token is already requested.');
-        $user->requestPhoneVerification($now->copy()->addSeconds(15));
+        $user->requestPhoneVerification($newPhone, $now->copy()->addSeconds(15));
     }
 
     /**
@@ -176,13 +140,14 @@ class PhoneTest extends TestCase
         $this->expectExceptionMessage('Token is expired.');
         $user->verifyPhone($token, $now->copy()->addSeconds(500));
     }
-    
+
     /**
      * Method testRequestPhoneVerifyToken
      *
      * @return void
      */
-    public function testRequestPhoneVerifyToken():void{
+    public function testRequestPhoneVerifyToken(): void
+    {
 
         $user = User::factory()->create([
             'phone' => null,
@@ -192,9 +157,9 @@ class PhoneTest extends TestCase
         ]);
 
         $this->expectExceptionMessage('Phone number is empty.');
-        $user->requestPhoneVerifyToken($now = Carbon::now());        
+        $user->requestPhoneVerifyToken($now = Carbon::now());
 
-        $user->update(['phone' => '+380000000000','phone_auth' => true]);
+        $user->update(['phone' => '+380000000000', 'phone_auth' => true]);
         $user->requestPhoneVerifyToken($now);
         $this->expectExceptionMessage('Token is already requested.');
         $user->requestPhoneVerifyToken($now->copy()->addSeconds(50));

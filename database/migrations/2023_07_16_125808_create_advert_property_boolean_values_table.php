@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('advert_property_boolean_values', function (Blueprint $table) {
             $table->id();
-            $table->string('advert_id');
+            $table->uuid('advert_id');
             $table->unsignedBigInteger('property_id');
             $table->boolean('value')->default(false);
             $table->timestamps();

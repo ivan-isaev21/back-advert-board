@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('advert_images', function (Blueprint $table) {
             $table->id();
-            $table->string('advert_id');
+            $table->uuid('advert_id');
             $table->string('file_hash');
             $table->string('file_path');
             $table->string('file_original_name');

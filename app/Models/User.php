@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Auth\MustVerifyEmail;
@@ -31,6 +30,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'login', 'email', 'phone', 'password', 'verify_token', 'status', 'role',
+        'avatar_hash', 'avatar_path', 'contact_person', 'city_id'
     ];
 
     /**
@@ -182,24 +182,26 @@ class User extends Authenticatable
         $this->saveOrFail();
     }
 
+
     /**
      * Method requestPhoneVerification
      *
+     * @param string $phone 
      * @param Carbon $now 
      *
      * @return string
      */
-    public function requestPhoneVerification(Carbon $now): string
+    public function requestPhoneVerification(string $phone, Carbon $now): string
     {
-        if (empty($this->phone)) {
-            throw new \DomainException('Phone number is empty.');
-        }
         if (!empty($this->phone_verify_token) && $this->phone_verify_token_expire && $this->phone_verify_token_expire->gt($now)) {
             throw new \DomainException('Token is already requested.');
         }
+
+        $this->phone = $phone;
         $this->phone_verified = false;
         $this->phone_verify_token = (string)random_int(10000, 99999);
         $this->phone_verify_token_expire = $now->copy()->addSeconds(300);
+        $this->phone_auth = false;
         $this->saveOrFail();
 
         return $this->phone_verify_token;
@@ -352,7 +354,7 @@ class User extends Authenticatable
      */
     public function isPhoneVerified(): bool
     {
-        return $this->phone_verified;
+        return (bool)$this->phone_verified;
     }
 
     /**
@@ -383,5 +385,18 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
+    }
+
+    /**
+     * Method scopeForHash
+     *
+     * @param Builder $query 
+     * @param string $hash 
+     *
+     * @return \Illuminate\Database\Eloquent\Builder 
+     */
+    public function scopeForHash(Builder $query, string $hash)
+    {
+        return $query->where('avatar_hash', $hash);
     }
 }

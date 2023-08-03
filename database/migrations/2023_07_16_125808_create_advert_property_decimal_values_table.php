@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('advert_property_decimal_values', function (Blueprint $table) {
             $table->id();
-            $table->string('advert_id');
+            $table->uuid('advert_id');
             $table->unsignedBigInteger('property_id');
             $table->decimal('value');
             $table->timestamps();
