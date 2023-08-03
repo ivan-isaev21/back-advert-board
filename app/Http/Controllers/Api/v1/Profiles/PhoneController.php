@@ -7,6 +7,7 @@ use App\Http\Requests\Profiles\ChangePhoneRequest;
 use App\Http\Requests\Profiles\UpdateProfileRequest;
 use App\Http\Requests\Profiles\VerifyPhoneRequest;
 use App\UseCases\Profiles\PhoneService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PhoneController extends Controller
@@ -29,7 +30,6 @@ class PhoneController extends Controller
     {
         $user = $request->user();
         $this->service->requestChangePhone($request, $user);
-
         return response($user, Response::HTTP_ACCEPTED);
     }
 
@@ -44,6 +44,20 @@ class PhoneController extends Controller
     {
         $user = $request->user();
         $this->service->verifyPhone($request, $user);
+        return response($user, Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Method enablePhoneAuth
+     *
+     * @param Request $request 
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function togglePhoneAuth(Request $request): \Illuminate\Http\Response
+    {
+        $user = $request->user();
+        $this->service->togglePhoneAuth($user);
         return response($user, Response::HTTP_ACCEPTED);
     }
 }

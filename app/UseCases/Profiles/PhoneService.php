@@ -49,4 +49,50 @@ class PhoneService
             $user->verifyPhone($request->token, Carbon::now());
         });
     }
+
+    /**
+     * Method enablePhoneAuth
+     *
+     * @param User $user 
+     *
+     * @return void
+     */
+    public function enablePhoneAuth(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            $user->enablePhoneAuth();
+        });
+    }
+
+    /**
+     * Method disablePhoneAuth
+     *
+     * @param User $user 
+     *
+     * @return void
+     */
+    public function disablePhoneAuth(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            $user->disablePhoneAuth();
+        });
+    }
+
+    /**
+     * Method togglePhoneAuth
+     *
+     * @param User $user 
+     *
+     * @return void
+     */
+    public function togglePhoneAuth(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            if ($user->phone_auth) {
+                $user->disablePhoneAuth();
+            } else {
+                $user->enablePhoneAuth();
+            }
+        });
+    }
 }

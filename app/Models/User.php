@@ -113,6 +113,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Method requestEmailVerification
+     *
+     * @param string $email 
+     *
+     * @return string
+     */
+    public function requestEmailVerification(string $email): string
+    {
+        $this->email = $email;
+        $this->status = self::STATUS_WAIT;
+        $this->email_verified_at = null;
+        $this->verify_token = Str::uuid();
+        $this->saveOrFail();
+
+        return $this->verify_token;
+    }
+
+    /**
      * Method verifyEmail
      *
      * @return void
