@@ -71,6 +71,7 @@ Route::group(['prefix' => 'v1'], function () {
             Route::put('toggle-phone-auth', 'PhoneController@togglePhoneAuth')->name('Profiles.me.togglePhoneAuth');
             Route::put('request-сhange-email', 'EmailController@requestChangeEmail')->name('Profiles.me.requestChangeEmail');
             Route::put('verify-email', 'EmailController@verifyEmail')->name('Profiles.me.verifyEmail');
+            Route::put('change-password', 'PasswordController@changePassword')->name('Profiles.me.changePassword');
             Route::put('/', 'ProfileController@update')->name('Profiles.me.update');
         });
     });
