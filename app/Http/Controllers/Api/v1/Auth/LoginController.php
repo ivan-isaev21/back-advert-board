@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Api\v1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PhoneVerifyTokenRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\Sms\SmsSender;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     private $smsSender;
+    private const NEED_VERIFY_PHONE_TO_LOGIN = 'NEED_VERIFY_PHONE_TO_LOGIN';
+    private const NEED_VERIFY_EMAIL_TO_LOGIN = 'NEED_VERIFY_EMAIL_TO_LOGIN';
+    private const SUCCESS_LOGINED = 'SUCCESS_LOGINED';
 
     public function __construct(SmsSender $smsSender)
     {
@@ -33,14 +36,14 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->remember)) {
             $user = $request->user();
-
             if ($user->isWait()) {
                 Auth::logout();
                 return response([
-                    'error' => 'You need to confirm your account. Please check your email.'
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    'message' => 'You need to confirm your account. Please check your email.',
+                    'status' => self::NEED_VERIFY_EMAIL_TO_LOGIN,
+                ], Response::HTTP_ACCEPTED);
             }
 
             if ($user->isPhoneAuthEnabled()) {
@@ -48,18 +51,21 @@ class LoginController extends Controller
                 $phoneVerifyToken = $user->requestPhoneVerifyToken(Carbon::now());
                 $this->smsSender->send($user->phone, 'Login code: ' . $phoneVerifyToken);
                 return response([
+                    'user' => new UserResource($user),
                     'message' => 'Please enter the login code sent to your phone.',
-                    'token' => $phoneVerifyToken,
-                    'id' => $user->id
+                    'status' => self::NEED_VERIFY_PHONE_TO_LOGIN
+
                 ], Response::HTTP_ACCEPTED);
             }
 
             $token = $user->createToken('api-token')->plainTextToken;
 
             return response([
+                'user' => new UserResource($user),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => config('sanctum.expiration') * 60, // Optional: Specify token expiration time
+                'status' => self::SUCCESS_LOGINED
             ], Response::HTTP_ACCEPTED);
         }
 
@@ -85,9 +91,11 @@ class LoginController extends Controller
             Auth::login($user, $request->remember);
             $token = $user->createToken('api-token')->plainTextToken;
             return response([
+                'user' => new UserResource($user),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'expires_in' => config('sanctum.expiration') * 60, 
+                'expires_in' => config('sanctum.expiration') * 60,
+                'status' => self::SUCCESS_LOGINED
             ], Response::HTTP_ACCEPTED);
         }
 

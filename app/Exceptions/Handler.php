@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use DomainException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -23,8 +24,11 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (DomainException $e) {
+            return response(['error' => $e->getMessage()], 422);
         });
+
+        // $this->reportable(function (Throwable $e) {
+        // });
     }
 }
