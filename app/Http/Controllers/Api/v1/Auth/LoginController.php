@@ -41,6 +41,7 @@ class LoginController extends Controller
             if ($user->isWait()) {
                 Auth::logout();
                 return response([
+                    'user' => new UserResource($user),
                     'message' => 'You need to confirm your account. Please check your email.',
                     'status' => self::NEED_VERIFY_EMAIL_TO_LOGIN,
                 ], Response::HTTP_ACCEPTED);

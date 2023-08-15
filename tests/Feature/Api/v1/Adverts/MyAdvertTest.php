@@ -106,8 +106,8 @@ class MyAdvertTest extends TestCase
 
         $updateUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id;
         $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is not belong to this user.']);
     }
 
     /**
@@ -130,8 +130,8 @@ class MyAdvertTest extends TestCase
 
         $updateUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id;
         $response = $this->putJson($updateUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not draft.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is not draft.']);
     }
 
     /**
@@ -169,8 +169,8 @@ class MyAdvertTest extends TestCase
         $payload = [];
         $sendToModerationUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id . '/send-to-moderation';
         $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is not belong to this user.']);
     }
 
     /**
@@ -187,8 +187,8 @@ class MyAdvertTest extends TestCase
         $payload = [];
         $sendToModerationUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id . '/send-to-moderation';
         $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'Advert is not draft.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'Advert is not draft.']);
     }
 
 
@@ -219,8 +219,8 @@ class MyAdvertTest extends TestCase
         $payload = [];
         $sendToModerationUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
         $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not belong to this user.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is not belong to this user.']);
     }
 
     /**
@@ -237,8 +237,8 @@ class MyAdvertTest extends TestCase
         $payload = [];
         $sendToModerationUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
         $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is draft.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is draft.']);
     }
 
     /**
@@ -255,8 +255,8 @@ class MyAdvertTest extends TestCase
         $payload = [];
         $sendToModerationUrl = $this->myAdvertsUrl . $this->category->id . '/' . $this->advert->id . '/close';
         $response = $this->putJson($sendToModerationUrl, $payload, $this->headers);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is already closed.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is already closed.']);
     }
 
     /**

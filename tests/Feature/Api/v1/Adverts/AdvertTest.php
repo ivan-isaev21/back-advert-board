@@ -53,8 +53,8 @@ class AdvertTest extends TestCase
 
         $showUrl = $this->advertsUrl . 'show/' . $this->advert->id;
         $response = $this->getJson($showUrl);
-        $response->assertStatus(500);
-        $response->assertJson(['message' => 'This advert is not available to show.']);
+        $response->assertStatus(422);
+        $response->assertJson(['error' => 'This advert is not available to show.']);
     }
 
 

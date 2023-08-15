@@ -238,8 +238,9 @@ class User extends Authenticatable
         if (empty($this->phone)) {
             throw new \DomainException('Phone number is empty.');
         }
+
         if (!empty($this->phone_verify_token) && $this->phone_verify_token_expire && $this->phone_verify_token_expire->gt($now)) {
-            throw new \DomainException('Token is already requested.');
+            return $this->phone_verify_token;
         }
 
         if (!$this->isPhoneAuthEnabled()) {

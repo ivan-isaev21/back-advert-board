@@ -48,7 +48,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJson([
-            'success' => 'Check your email and click on the link to verify.'
+            'message' => 'Check your email and click on the link to verify.'
         ]);
     }
 

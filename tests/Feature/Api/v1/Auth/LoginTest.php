@@ -22,7 +22,7 @@ class LoginTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The email field is required. (and 1 more error)',
+            'message' => 'The email field is required. (and 2 more errors)',
             'errors' => [
                 'email' => ['The email field is required.'],
                 'password' => ['The password field is required.'],
@@ -39,20 +39,21 @@ class LoginTest extends TestCase
     {
         User::register(
             $name = 'test',
-            $email = 'test-email@test.com',
+            $email = 'test-email21@test.com',
             $password = 'Aa123456789'
         );
 
         $payload = [
             'email' => $email,
-            'password' => $password
+            'password' => $password,
+            'remember' => 0
         ];
 
         $response = $this->postJson($this->authUrl, $payload);
 
-        $response->assertStatus(422);
+        $response->assertStatus(202);
         $response->assertJson([
-            'error' => 'You need to confirm your account. Please check your email.'
+            'message' => 'You need to confirm your account. Please check your email.'
         ]);
     }
 
@@ -79,7 +80,8 @@ class LoginTest extends TestCase
 
         $payload = [
             'email' => $email,
-            'password' => $password
+            'password' => $password,
+            'remember' => 0
         ];
 
         $response = $this->postJson($this->authUrl, $payload);
@@ -109,7 +111,8 @@ class LoginTest extends TestCase
 
         $payload = [
             'email' => $email,
-            'password' => $password
+            'password' => $password,
+            'remember' => 0
         ];
 
         $response = $this->postJson($this->authUrl, $payload);
@@ -140,7 +143,8 @@ class LoginTest extends TestCase
 
         $payload = [
             'email' => $email,
-            'password' => $wrongPassword
+            'password' => $wrongPassword,
+            'remember' => 0
         ];
 
         $response = $this->postJson($this->authUrl, $payload);

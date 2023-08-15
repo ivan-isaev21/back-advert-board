@@ -27,11 +27,11 @@ class RegisterService
      *
      * @param RegisterRequest $request 
      *
-     * @return void
+     * @return User
      */
-    public function register(RegisterRequest $request): void
+    public function register(RegisterRequest $request): User
     {
-        DB::transaction(function () use ($request) {
+        $user = DB::transaction(function () use ($request) {
             $user = User::register(
                 $request->login,
                 $request->email,
@@ -39,9 +39,11 @@ class RegisterService
             );
 
             $this->mailer->to($user->email)->send(new CustomVerifyEmailMail($user));
-
             $this->dispatcher->dispatch(new Registered($user));
+            return $user;
         });
+
+        return $user;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\UseCases\Auth\RegisterService;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Http\Response;
 class RegisterController extends Controller
 {
     private $service;
+    private const NEED_VERIFY_EMAIL_TO_LOGIN = 'NEED_VERIFY_EMAIL_TO_LOGIN';
 
     public function __construct(RegisterService $service)
     {
@@ -27,10 +29,12 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $this->service->register($request);
+        $user = $this->service->register($request);
 
         return response([
-            'success' => 'Check your email and click on the link to verify.'
+            'user' => new UserResource($user),
+            'message' => 'Check your email and click on the link to verify.',
+            'status' => self::NEED_VERIFY_EMAIL_TO_LOGIN,
         ], Response::HTTP_CREATED);
     }
 
