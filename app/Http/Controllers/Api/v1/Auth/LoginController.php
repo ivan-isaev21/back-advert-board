@@ -5,24 +5,26 @@ namespace App\Http\Controllers\Api\v1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PhoneVerifyTokenRequest;
+use App\Http\Requests\Auth\ResendPhoneVerifyTokenRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Services\Sms\SmsSender;
+use App\UseCases\Auth\LoginService;
 use Carbon\Carbon;
+use DomainException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    private $smsSender;
+    private $loginService;
     private const NEED_VERIFY_PHONE_TO_LOGIN = 'NEED_VERIFY_PHONE_TO_LOGIN';
     private const NEED_VERIFY_EMAIL_TO_LOGIN = 'NEED_VERIFY_EMAIL_TO_LOGIN';
     private const SUCCESS_LOGINED = 'SUCCESS_LOGINED';
 
-    public function __construct(SmsSender $smsSender)
+    public function __construct(LoginService $loginService)
     {
-        $this->smsSender = $smsSender;
+        $this->loginService = $loginService;
     }
 
     /**
@@ -32,7 +34,7 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): Response
     {
         $credentials = $request->only(['email', 'password']);
 
@@ -49,8 +51,7 @@ class LoginController extends Controller
 
             if ($user->isPhoneAuthEnabled()) {
                 Auth::logout();
-                $phoneVerifyToken = $user->requestPhoneVerifyToken(Carbon::now());
-                $this->smsSender->send($user->phone, 'Login code: ' . $phoneVerifyToken);
+                $this->loginService->sendPhoneVerifyToken($user);
                 return response([
                     'user' => new UserResource($user),
                     'message' => 'Please enter the login code sent to your phone.',
@@ -76,13 +77,41 @@ class LoginController extends Controller
     }
 
     /**
+     * Method resendPhoneVerifyToken
+     *
+     * @param ResendPhoneVerifyTokenRequest $request 
+     * @param User $user 
+     *
+     * @return Response
+     */
+    public function resendPhoneVerifyToken(ResendPhoneVerifyTokenRequest $request, User $user): Response
+    {
+
+        $inputDate = Carbon::parse($request->token_expire)->toDateTimeString();
+        $userDate = $user->phone_verify_token_expire->toDateTimeString();
+
+        if ($inputDate != $userDate) {
+            throw new DomainException("Invalid phone token expire.");
+        }
+
+        $this->loginService->sendPhoneVerifyToken($user);
+
+        return response([
+            'user' => new UserResource($user),
+            'message' => 'Please enter the login code sent to your phone.',
+            'status' => self::NEED_VERIFY_PHONE_TO_LOGIN
+
+        ], Response::HTTP_ACCEPTED);
+    }
+
+    /**
      * Method validatePhoneVerifyToken
      *
      * @param PhoneVerifyTokenRequest $request 
      *
      * @return Response
      */
-    public function validatePhoneVerifyToken(PhoneVerifyTokenRequest $request, $id, $token)
+    public function validatePhoneVerifyToken(PhoneVerifyTokenRequest $request, $id, $token): Response
     {
         /** @var User $user */
         $user = User::findOrFail($id);
@@ -112,7 +141,7 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function logout(Request $request)
+    public function logout(Request $request): Response
     {
         $request->user()->currentAccessToken()->delete();
         return response([
@@ -127,7 +156,7 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function logoutOtherDevices(Request $request)
+    public function logoutOtherDevices(Request $request): Response
     {
         $request->user()->tokens()->where('id', '!=', $request->user()->currentAccessToken()->id)->delete();
 

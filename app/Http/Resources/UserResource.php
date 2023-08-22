@@ -18,11 +18,13 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'login' => $this->login,
-            'avatar_url' => $this->avatar_path and Storage::exists($this->avatar_path) ? Storage::url($this->avatar_path) : null,
+            'avatar_url' =>  Storage::url($this->avatar_path),
+            'avatar_path' => $this->avatar_path,
             'contact_person' => $this->contact_person,
             'city_id' => $this->city_id,
             'email' => $this->email,
             'phone' => $this->phone,
+            'phone_verify_token_expire' => $this->phone_verify_token_expire ? $this->phone_verify_token_expire->toDateTimeString() : null,
             'role' => $this->role
         ];
     }

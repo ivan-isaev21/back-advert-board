@@ -30,6 +30,7 @@ class AvatarService
         DB::transaction(function () use ($user, $file) {
             $hash = $this->fileService->getFileHash($file);
             $path = $this->getAvatarPath($file, $hash);
+
             $user->update([
                 'avatar_hash' => $hash,
                 'avatar_path' => $path

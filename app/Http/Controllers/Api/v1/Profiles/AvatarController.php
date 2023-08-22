@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Profiles;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profiles\CreateAvatarRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\UseCases\Profiles\AvatarService;
 use DomainException;
@@ -35,8 +36,9 @@ class AvatarController extends Controller
         }
 
         $file = $request->file('file');
+
         $this->service->create($user, $file);
-        return response($user, Response::HTTP_CREATED);
+        return response(new UserResource($user), Response::HTTP_CREATED);
     }
 
     /**

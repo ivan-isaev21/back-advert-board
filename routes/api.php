@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v1'], function () {
             Route::post('register', 'RegisterController@register')->name('Auth.register');
             Route::post('login', 'LoginController@login')->name('Auth.login');
             Route::post('phone/verify/{id}/{token}', 'LoginController@validatePhoneVerifyToken')->name('Auth.validatePhoneVerifyToken');
+            Route::post('phone/resend-verify-token/{user}', 'LoginController@resendPhoneVerifyToken')->name('Auth.resendPhoneVerifyToken');
             Route::post('request-password-reset-token', 'ResetPasswordController@requestPasswordResetToken')->name('Auth.requestPasswordResetToken');
             Route::post('change-password', 'ResetPasswordController@changePassword')->name('Auth.changePassword');
             Route::post('email/verify/{id}/{hash}', 'RegisterController@verify')->name('Auth.validateEmailVerifyToken');
