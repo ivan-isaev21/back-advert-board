@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('avatar_hash')->nullable();
             $table->string('avatar_path')->nullable();
             $table->string('contact_person')->nullable();
+            $table->unsignedBigInteger('division_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

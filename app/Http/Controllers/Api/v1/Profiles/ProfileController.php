@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Profiles;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profiles\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
 use App\UseCases\Profiles\ProfileService;
 use Illuminate\Http\Response;
 
@@ -27,7 +28,6 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $this->service->update($request, $user);
-
-        return response($user, Response::HTTP_ACCEPTED);
+        return response(['user' => new UserResource($user), 'message' => 'Success updated'], Response::HTTP_ACCEPTED);
     }
 }

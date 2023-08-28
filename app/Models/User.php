@@ -30,7 +30,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'login', 'email', 'phone', 'password', 'verify_token', 'status', 'role',
-        'avatar_hash', 'avatar_path', 'contact_person', 'city_id'
+        'avatar_hash', 'avatar_path', 'contact_person', 'division_id', 'city_id'
     ];
 
     /**

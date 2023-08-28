@@ -23,7 +23,8 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'contact_person' => 'required|string|max:255',
-            'city_id' => ['sometimes', 'nullable', 'integer', 'exists:geo-mysql.cities,id'],
+            'division_id' => ['required_with:city_id', 'nullable', 'integer', 'exists:geo-mysql.divisions,id'],
+            'city_id' => ['required_with:division_id', 'integer', 'exists:geo-mysql.cities,id'],
         ];
     }
 }

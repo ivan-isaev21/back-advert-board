@@ -17,6 +17,14 @@ class AvatarService
         $this->fileService = $fileService;
     }
 
+    public function update(User $user, UploadedFile $file)
+    {
+        DB::transaction(function () use ($user, $file) {
+            $this->delete($user);
+            $this->create($user, $file);
+        });
+    }
+
     /**
      * Method create
      *

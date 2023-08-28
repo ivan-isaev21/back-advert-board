@@ -21,6 +21,7 @@ class ProfileService
         $userUpdated = DB::transaction(function () use ($request, $user) {
             $user->update([
                 'contact_person' => $request->contact_person,
+                'division_id' => $request->division_id,
                 'city_id' => $request->city_id
             ]);
             return $user;

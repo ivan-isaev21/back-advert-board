@@ -31,14 +31,10 @@ class AvatarController extends Controller
     {
         $user = $request->user();
 
-        if ($user->avatar_hash and $user->avatar_path) {
-            throw new DomainException('Avatar is already set.');
-        }
-
         $file = $request->file('file');
 
-        $this->service->create($user, $file);
-        return response(new UserResource($user), Response::HTTP_CREATED);
+        $this->service->update($user, $file);
+        return response(['user' => new UserResource($user), 'message' => 'You success changed avatar.'], Response::HTTP_CREATED);
     }
 
     /**
