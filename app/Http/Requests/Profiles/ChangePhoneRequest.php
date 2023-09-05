@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Profiles;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ChangePhoneRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class ChangePhoneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'required|string|unique:users,phone',
+            'phone' => ['required', 'string',  Rule::unique('users', 'phone')->ignore($this->user()->id)],
         ];
     }
 }

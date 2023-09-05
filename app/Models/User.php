@@ -218,7 +218,7 @@ class User extends Authenticatable
         $this->phone = $phone;
         $this->phone_verified = false;
         $this->phone_verify_token = (string)random_int(10000, 99999);
-        $this->phone_verify_token_expire = $now->copy()->addSeconds(300);
+        $this->phone_verify_token_expire = $now->copy()->addSeconds(30);
         $this->phone_auth = false;
         $this->saveOrFail();
 
