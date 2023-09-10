@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Profiles;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profiles\ChangePasswordRequest;
+use App\Http\Resources\UserResource;
 use App\UseCases\Profiles\PasswordService;
 use Illuminate\Http\Response;
 
@@ -27,6 +28,6 @@ class PasswordController extends Controller
     {
         $user = $request->user();
         $this->service->changePassword($request, $user);
-        return response($user, Response::HTTP_ACCEPTED);
+        return response(['user' => new UserResource($user), 'message' => 'You success changed password.'], Response::HTTP_ACCEPTED);
     }
 }

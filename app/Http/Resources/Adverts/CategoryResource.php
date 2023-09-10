@@ -23,6 +23,7 @@ class CategoryResource extends JsonResource
             'parent_id' => $this->parent_id,
             'depth' => $this->depth,
             'path' => $this->getPath(),
+            'breadcrumb_path' => $this->getBreadcrumbPath(),
             'children' => self::collection($this->children),
             'properties' => PropertyResource::collection($this->properties),
             'all_properties' => PropertyResource::collection($this->allProperties())

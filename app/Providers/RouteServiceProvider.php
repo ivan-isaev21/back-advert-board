@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+
+use App\Models\Adverts\Category;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -35,6 +37,25 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+        });
+
+        Route::bind('category_path', function (string $value) {
+            $chunks = explode('/', $value);
+
+            $category = null;
+            do {
+                $slug = reset($chunks);
+                if ($slug && $next = Category::where('slug', $slug)->where('parent_id', $category ? $category->id : null)->first()) {
+                    $category = $next;
+                    array_shift($chunks);
+                }
+            } while (!empty($slug) && !empty($next));
+
+            if (!empty($chunks)) {
+                abort(404);
+            }
+
+            return $category;
         });
     }
 }

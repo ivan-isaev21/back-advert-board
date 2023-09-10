@@ -23,6 +23,19 @@ class Category extends Model
         return implode('/', array_merge($this->ancestors()->defaultOrder()->pluck('slug')->toArray(), [$this->slug]));
     }
 
+    public function getBreadcrumbPath()
+    {
+        $breadcrumbPath = [];
+        $ancestors = $this->ancestors()->defaultOrder()->get();
+
+        foreach ($ancestors as $ancestor) {
+            $breadcrumbPath[] = ['path' => $ancestor->getPath(), 'name' => $ancestor->name, 'isActive' => false];
+        }
+
+        $breadcrumbPath[] = ['path' => $this->getPath(), 'name' => $this->name, 'isActive' => true];
+        return $breadcrumbPath;
+    }
+
     /**
      * Method parentProperties
      *
@@ -58,7 +71,7 @@ class Category extends Model
             return $item !== null;
         });
     }
-    
+
     /**
      * Method allSortableProperties
      *
