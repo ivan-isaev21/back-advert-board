@@ -33,8 +33,8 @@ class CategoryController extends Controller
         return new CategoryResource($this->service->getCategoryTree($category));
     }
 
-    public function findByPath(Request $request, $path)
+    public function findByPath(Request $request, $category)
     {
-        return new CategoryResource($path);
+        return new CategoryResource($this->service->getCategoryTree($category));
     }
 }

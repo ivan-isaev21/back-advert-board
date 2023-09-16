@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Adverts;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +19,7 @@ class AdvertResource extends JsonResource
             'id' => $this->id,
             'category_id' => $this->category_id,
             // 'category' => new CategoryResource($this->category),
-            'user_id' => $this->user_id,
+            'user' =>  new UserResource($this->user),
             'location'  => [
                 'country_id' => $this->country_id,
                 'division_id' => $this->division_id,

@@ -27,7 +27,7 @@ class SearchRequest extends FormRequest
     {
         $rules =  [
             'search' => 'nullable',
-
+            'per_page' => ['sometimes', 'integer', 'in:1,3,6,9,12,24,36,54'],
             'location' => ['sometimes', 'missing_with:geo'],
             'location.country_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.countries,id'],
             'location.division_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.divisions,id'],

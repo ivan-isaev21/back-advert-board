@@ -12,17 +12,29 @@ class AdvertSearchService
 {
     public function search(SearchRequest $request, ?Category $category, ?array $statuses, ?User $user)
     {
-        $filters = $this->getFilters($request->properties ?? null, $request->location ?? null, $request->geo ?? null);
+        $filters = $this->getFilters(
+            $request->properties ?? null,
+            $request->location ?? null,
+            $request->geo ?? null,
+            $category,
+            $statuses,
+            $user
+        );
+
+        $perPage = $request->per_page ? (int)$request->per_page : 12;
 
 
         if ($request->search or $filters) {
-            $query = Advert::search('', function (Indexes $meiliSearch, $query, $options) use ($request, $filters) {
+            $query = Advert::search('', function (Indexes $meiliSearch, $query) use ($request, $filters,  $perPage) {
                 $options = [];
 
                 if ($filters) {
                     $options['filter'] = $filters;
-                    //$options['hitsPerPage'] = 15;
                 }
+
+                $options['page'] = $request->page ? (int)$request->page : 1;
+
+                $options['hitsPerPage'] = $perPage;
 
                 return $meiliSearch->search(
                     $request->search,
@@ -30,43 +42,44 @@ class AdvertSearchService
                 );
             });
         } else {
-            $query = Advert::query();
+            $query = Advert::query()->with(['user']);
         }
 
-        if ($category->id) {
-            $query->whereIn('category_id', array_merge(
-                [$category->id],
-                $category->descendants()->pluck('id')->toArray()
-            ));
-        }
 
-        if ($statuses) {
-            $query->whereIn('status', $statuses);
-        }
+        // if ($category->id) {
+        //     $query->whereIn('category_id', array_merge(
+        //         [$category->id],
+        //         $category->descendants()->pluck('id')->toArray()
+        //     ));
+        // }
 
-        if ($user) {
-            $query->where('user_id', $user->id);
-        }
+        // if ($statuses) {
+        //     $query->whereIn('status', $statuses);
+        // }
 
-        //$adverts = $query->paginate(15);
-        $adverts = $query->get();
+        // if ($user) {
+        //     $query->where('user_id', $user->id);
+        // }
+
+
+
+        $adverts = $query->paginate($perPage);
 
         return $adverts;
     }
 
-    /**
-     * Method getFilters
-     *
-     * @param ?array $properties 
-     * @param ?array $location 
-     * @param ?array $geo 
-     *
-     * @return string|bool
-     */
-    private function getFilters(?array $properties, ?array $location, ?array $geo): string|bool
+    private function getFilters(?array $properties, ?array $location, ?array $geo, ?Category $category, ?array $statuses, ?User $user): string|bool
     {
         $filters = [];
         $stringFilters = '';
+
+        if ($categoryFilters = $this->getCategoryFilters($category)) {
+            $filters[] = $categoryFilters;
+        }
+
+        if ($statusesFilters = $this->getStatusesFilters($statuses)) {
+            $filters[] = $statusesFilters;
+        }
 
         if ($locationFilters = $this->getLocationFilters($location)) {
             $filters[] = $locationFilters;
@@ -96,6 +109,48 @@ class AdvertSearchService
         }
 
         return $stringFilters;
+    }
+
+
+    private function getCategoryFilters(?Category $category)
+    {
+        if ($category->id) {
+            $categories = array_merge([$category->id], $category->descendants()->pluck('id')->toArray());
+
+            if (count($categories) == 0) {
+                return false;
+            }
+
+            $text = '[' . implode(',', $categories) . ']';
+            $filters = 'category_id IN ' .  $text;
+            return $filters;
+        }
+
+        return false;
+    }
+
+    private function getStatusesFilters(?array $statuses)
+    {
+        if ($statuses) {
+            if (count($statuses) == 0) {
+                return false;
+            }
+
+            $text = '[' . implode(',', $statuses) . ']';
+            $filters = 'status IN ' .  $text;
+            return $filters;
+        }
+
+        return false;
+    }
+
+    private function getUserFilter(?User $user): string
+    {
+        if ($user) {
+            return 'user_id = ' . $user->id;
+        }
+
+        return false;
     }
 
 

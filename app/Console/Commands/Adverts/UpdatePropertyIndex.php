@@ -49,6 +49,7 @@ class UpdatePropertyIndex extends Command
         })->toArray();
 
         $filterableProperties[] = 'user_id';
+        $filterableProperties[] = 'status';
         $filterableProperties[] = 'category_id';
         $filterableProperties[] = 'country_id';
         $filterableProperties[] = 'division_id';
@@ -74,6 +75,7 @@ class UpdatePropertyIndex extends Command
         })->toArray();
 
         $sortableProperties[] = 'user_id';
+        $sortableProperties[] = 'status';
         $sortableProperties[] = 'category_id';
         $sortableProperties[] = 'country_id';
         $sortableProperties[] = 'division_id';
