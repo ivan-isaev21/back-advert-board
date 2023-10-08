@@ -11,7 +11,7 @@ class Image extends Model
     use HasFactory;
 
     protected $table = 'advert_images';
-    protected $fillable = ['advert_id', 'file_hash', 'file_path', 'file_original_name'];
+    protected $fillable = ['advert_id', 'file_hash', 'file_path', 'file_original_name', 'index'];
 
 
     /**

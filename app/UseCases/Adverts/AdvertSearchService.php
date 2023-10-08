@@ -42,7 +42,7 @@ class AdvertSearchService
                 );
             });
         } else {
-            $query = Advert::query()->with(['user']);
+            $query = Advert::query()->with(['user', 'category']);
         }
 
 
@@ -79,6 +79,10 @@ class AdvertSearchService
 
         if ($statusesFilters = $this->getStatusesFilters($statuses)) {
             $filters[] = $statusesFilters;
+        }
+
+        if ($userFilter = $this->getUserFilter($user)) {
+            $filters[] = $userFilter;
         }
 
         if ($locationFilters = $this->getLocationFilters($location)) {

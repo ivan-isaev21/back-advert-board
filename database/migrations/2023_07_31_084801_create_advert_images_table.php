@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('file_hash');
             $table->string('file_path');
             $table->string('file_original_name');
+            $table->tinyInteger('index', false, true);
             $table->timestamps();
 
             $table->foreign('advert_id')->references('id')->on('adverts')->cascadeOnDelete()->cascadeOnUpdate();

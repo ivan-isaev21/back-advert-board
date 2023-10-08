@@ -170,9 +170,11 @@ class AdvertService
     private function createImages(CreateRequest $request, Advert $advert): void
     {
         if (isset($request->images)) {
-            $files = $request->file('images');
-            foreach ($files as $key => $file) {
-                $this->imageService->create($advert, $file['file']);
+            // $files = $request->file('images');
+            foreach ($request->images as $image) {
+                // $file = $image['file']->file('file');
+                // dd($image['file']);
+                $this->imageService->create($advert, $image['file'], $image['index']);
             }
         }
     }

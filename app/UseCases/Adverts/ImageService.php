@@ -17,7 +17,7 @@ class ImageService
         $this->fileService = $fileService;
     }
 
-    public function create(Advert $advert, UploadedFile $file): Image
+    public function create(Advert $advert, UploadedFile $file, int $index): Image
     {
         $hash = $this->fileService->getFileHash($file);
         $path = $this->getImagePath($file, $hash);
@@ -27,7 +27,8 @@ class ImageService
             'advert_id' => $advert->id,
             'file_hash' => $hash,
             'file_path' => $path,
-            'file_original_name' => $name
+            'file_original_name' => $name,
+            'index' => $index
         ]);
     }
 
@@ -59,7 +60,7 @@ class ImageService
     public function getImagePath(UploadedFile $file, string $hash): string
     {
         $image = $this->findImageByHash($hash);
-        $dir = 'images';
+        $dir = 'adverts';
 
         if ($image and Storage::exists($image->file_path)) {
             return $image->file_path;

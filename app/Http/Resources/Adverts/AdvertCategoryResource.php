@@ -4,9 +4,8 @@ namespace App\Http\Resources\Adverts;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
-class ImageResource extends JsonResource
+class AdvertCategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +16,10 @@ class ImageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'url' => Storage::url($this->file_path),
-            'file_original_name' => $this->file_original_name,
-            'index' => $this->index
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'path' => $this->getPath(),
+            'breadcrumb_path' => $this->getBreadcrumbPath()
         ];
     }
 }

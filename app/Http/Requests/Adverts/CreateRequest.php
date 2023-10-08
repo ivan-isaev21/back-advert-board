@@ -23,23 +23,24 @@ class CreateRequest extends FormRequest
     {
         $rules =  [
 
-            'location' => ['sometimes'],
+            'location' => ['sometimes', 'array'],
             'location.country_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.countries,id'],
             'location.division_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.divisions,id'],
             'location.city_id' => ['sometimes', 'required', 'integer', 'exists:geo-mysql.cities,id'],
 
-            'geo' => ['sometimes'],
+            'geo' => ['sometimes', 'array'],
             'geo.latitude' => 'required_with:geo|decimal:0,7|between:-90,90',
             'geo.longitude' => 'required_with:geo|decimal:0,7|between:-180,180',
 
             'title' => 'required|max:255',
             'content' => 'required|max:255',
 
-            'images' => 'sometimes|required|array|max:5',
+            'images' => 'sometimes|array|max:8',
             'images.*.file' =>  'required_with:images|mimes:jpg,png,gif|max:5120',
+            'images.*.index' => 'required_with:images|in:0,1,2,3,4,5,6,7|distinct'
         ];
 
-        foreach ($this->category->allProperties() as $property) {
+        foreach ($this->category->properties as $property) {
             $rules['properties.' . $property->id] = $property->getValidationRule();
         }
 
