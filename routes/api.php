@@ -60,7 +60,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('categories', 'CategoryController@index')->name('Adverts.categories.list');
         Route::get('categories/path/{category_path}', 'CategoryController@findByPath')->name('Adverts.categories.findByPath')->where('category_path', '.+');
         Route::get('categories/{category}', 'CategoryController@show')->name('Adverts.categories.show');
-        Route::get('show/{advert}', 'AdvertController@show')->name('Adverts.show');
+        Route::get('show/{advert}', 'AdvertController@show')->name('Adverts.show')->middleware('guestAndAuth');
         Route::get('{category?}', 'AdvertController@index')->name('Adverts.list');
     });
 

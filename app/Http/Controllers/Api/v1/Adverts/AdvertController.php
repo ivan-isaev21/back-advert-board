@@ -9,8 +9,11 @@ use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
 use App\Models\User;
 use App\UseCases\Adverts\AdvertSearchService;
-use DomainException;
+use Exception;
+use Http\Discovery\Exception\NotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 
 class AdvertController extends Controller
 {
@@ -61,12 +64,12 @@ class AdvertController extends Controller
      *
      * @return App\Http\Resources\Adverts\AdvertResource
      */
-    public function show(Request $request, Advert $advert): \App\Http\Resources\Adverts\AdvertResource
+    public function show(Request $request, Advert $advert): \App\Http\Resources\Adverts\AdvertResource | Response
     {
         $authUser = $request->user();
 
         if (!$advert->isAvailableToShow($authUser)) {
-            throw new DomainException('This advert is not available to show.');
+            return response('This advert is not found', Response::HTTP_NOT_FOUND);
         }
 
         return new AdvertResource($advert);
