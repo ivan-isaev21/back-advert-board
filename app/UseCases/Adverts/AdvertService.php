@@ -8,6 +8,7 @@ use App\Events\Adverts\Deleted;
 use App\Events\Adverts\SendToModeration;
 use App\Events\Adverts\Updated;
 use App\Http\Requests\Adverts\CreateRequest;
+use App\Http\Requests\Adverts\UpdateRequest;
 use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
 use App\Models\Adverts\Image;
@@ -27,14 +28,6 @@ class AdvertService
         $this->imageService = $imageService;
     }
 
-    /**
-     * Method create
-     *
-     * @param CreateRequest $request 
-     * @param Category $category 
-     * @param User $user 
-     * @return Advert
-     */
     public function create(CreateRequest $request, Category $category,  User $user): Advert
     {
         $geo = $this->getGeo($request);
@@ -64,16 +57,7 @@ class AdvertService
         return $advertCreated;
     }
 
-    /**
-     * Method update
-     *
-     * @param CreateRequest $request 
-     * @param Category $category 
-     * @param Advert $advert 
-     *
-     * @return Advert
-     */
-    public function update(CreateRequest $request, Category $category, Advert $advert): Advert
+    public function update(UpdateRequest $request, Category $category, Advert $advert): Advert
     {
         $geo = $this->getGeo($request);
 
@@ -98,30 +82,16 @@ class AdvertService
         return $advertUpdated;
     }
 
-    /**
-     * Method delete
-     *
-     * @param Advert $advert 
-     *
-     * @return void
-     */
     public function delete(Advert $advert): void
     {
         DB::transaction(function () use ($advert) {
-            $this->clearImages($advert);
+            $this->clearImages($advert, []);
             $advert->clearAllPropertyValues();
             $advert->delete();
             $this->dispatcher->dispatch(new Deleted($advert));
         });
     }
 
-    /**
-     * Method sendToModeration
-     *
-     * @param Advert $advert 
-     *
-     * @return void
-     */
     public function sendToModeration(Advert $advert): void
     {
         DB::transaction(function () use ($advert) {
@@ -130,13 +100,6 @@ class AdvertService
         });
     }
 
-    /**
-     * Method close
-     *
-     * @param Advert $advert 
-     *
-     * @return void
-     */
     public function close(Advert $advert): void
     {
         DB::transaction(function () use ($advert) {
@@ -145,29 +108,13 @@ class AdvertService
         });
     }
 
-    /**
-     * Method updateImages
-     *
-     * @param CreateRequest $request 
-     * @param Advert $advert 
-     *
-     * @return void
-     */
-    private function updateImages(CreateRequest $request, Advert $advert): void
+    private function updateImages(CreateRequest|UpdateRequest $request, Advert $advert): void
     {
-        $this->clearImages($advert);
+        $this->clearImages($advert, $request->images_to_exclude ?? []);
         $this->createImages($request, $advert);
     }
 
-    /**
-     * Method createImages
-     *
-     * @param CreateRequest $request 
-     * @param Advert $advert 
-     *
-     * @return void
-     */
-    private function createImages(CreateRequest $request, Advert $advert): void
+    private function createImages(CreateRequest|UpdateRequest $request, Advert $advert): void
     {
         if (isset($request->images)) {
             foreach ($request->images as $image) {
@@ -176,45 +123,22 @@ class AdvertService
         }
     }
 
-    /**
-     * Method clearImages
-     *
-     * @param Advert $advert
-     *
-     * @return void
-     */
-    private function clearImages(Advert $advert): void
+    private function clearImages(Advert $advert, array $imagesToExclude): void
     {
-        $advert->images()->each(function (Image $image) {
-            $this->imageService->delete($image);
+        $advert->images()->each(function (Image $image) use ($imagesToExclude) {
+            if (!in_array($image->index, $imagesToExclude)) {
+                $this->imageService->delete($image);
+            }
         });
     }
 
-
-    /**
-     * Method updatePropertyValues
-     *
-     * @param CreateRequest $request 
-     * @param Category $category 
-     * @param Advert $advert 
-     *
-     * @return void
-     */
-    private function updatePropertyValues(CreateRequest $request, Category $category, Advert $advert): void
+    private function updatePropertyValues(CreateRequest|UpdateRequest  $request, Category $category, Advert $advert): void
     {
         $advert->clearAllPropertyValues();
         $this->createPropertyValues($request, $category, $advert);
     }
 
-    /**
-     * Method createPropertyValues
-     *
-     * @param CreateRequest $request 
-     * @param Category $category 
-     * @param Advert $advert 
-     * @return void
-     */
-    private function createPropertyValues(CreateRequest $request, Category $category, Advert $advert): void
+    private function createPropertyValues(CreateRequest|UpdateRequest $request, Category $category, Advert $advert): void
     {
         foreach ($category->allProperties() as $property) {
             $value = $request->properties[$property->id] ?? null;
@@ -225,14 +149,7 @@ class AdvertService
         }
     }
 
-    /**
-     * Method getGeo
-     *
-     * @param CreateRequest $request 
-     *
-     * @return array
-     */
-    private function getGeo(CreateRequest $request): array
+    private function getGeo(CreateRequest|UpdateRequest $request): array
     {
         $latitude = null;
         $longitude = null;

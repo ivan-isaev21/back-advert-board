@@ -19,7 +19,8 @@ class AdvertCategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'path' => $this->getPath(),
-            'breadcrumb_path' => $this->getBreadcrumbPath()
+            'breadcrumb_path' => $this->getBreadcrumbPath(),
+            'properties' => $this->properties
         ];
     }
 }

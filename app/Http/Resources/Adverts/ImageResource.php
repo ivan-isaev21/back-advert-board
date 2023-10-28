@@ -17,7 +17,7 @@ class ImageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'url' => Storage::url($this->file_path),
+            'url' => config('app.url') . '' . Storage::url($this->file_path),
             'file_original_name' => $this->file_original_name,
             'index' => $this->index
         ];

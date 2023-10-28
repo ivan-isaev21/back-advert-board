@@ -34,7 +34,7 @@ class AdvertSearchService
 
                 $options['page'] = $request->page ? (int)$request->page : 1;
 
-                $options['hitsPerPage'] = $perPage;
+                $options['hitsPerPage'] = $options['page'] == 1 ? $perPage + 1 : $perPage;
 
                 return $meiliSearch->search(
                     $request->search,

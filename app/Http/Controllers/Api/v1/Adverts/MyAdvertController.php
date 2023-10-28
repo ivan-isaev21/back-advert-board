@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Adverts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Adverts\CreateRequest;
 use App\Http\Requests\Adverts\SearchRequest;
+use App\Http\Requests\Adverts\UpdateRequest;
 use App\Http\Resources\Adverts\AdvertResource;
 use App\Models\Adverts\Advert;
 use App\Models\Adverts\Category;
@@ -35,7 +36,7 @@ class MyAdvertController extends Controller
      */
     public function index(SearchRequest $request, ?Category $category): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $statuses = $request->statuses ?? null;
+        $statuses = $request->statuses ?? [Advert::STATUS_ACTIVE, Advert::STATUS_CLOSED, Advert::STATUS_DRAFT, Advert::STATUS_MODERATION];
         $user = $request->user();
         $adverts = $this->searchService->search($request, $category, $statuses, $user);
 
@@ -61,13 +62,13 @@ class MyAdvertController extends Controller
     /**
      * Method update
      *
-     * @param CreateRequest $request 
+     * @param UpdateRequest $request 
      * @param Category $category 
      * @param Advert $advert 
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(CreateRequest $request, Category $category, Advert $advert): \Illuminate\Http\Response
+    public function update(UpdateRequest $request, Category $category, Advert $advert): \Illuminate\Http\Response
     {
         $user = $request->user();
 
